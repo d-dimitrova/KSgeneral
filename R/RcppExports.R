@@ -5,3 +5,11 @@ ks_c_cdf_Rcpp <- function(n) {
     .Call(`_KSgeneral_ks_c_cdf_Rcpp`, n)
 }
 
+KS2sample_Rcpp <- function(m, n, kind, M, q, w_vec, tol) {
+    .Call(`_KSgeneral_KS2sample_Rcpp`, m, n, kind, M, q, w_vec, tol)
+}
+
+Kuiper2sample_Rcpp <- function(m, n, M, q, tol) {
+    .Call(`_KSgeneral_Kuiper2sample_Rcpp`, m, n, M, q, tol)
+}
+

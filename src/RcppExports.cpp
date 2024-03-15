@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // ks_c_cdf_Rcpp
 double ks_c_cdf_Rcpp(double n);
 RcppExport SEXP _KSgeneral_ks_c_cdf_Rcpp(SEXP nSEXP) {
@@ -16,9 +21,43 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// KS2sample_Rcpp
+double KS2sample_Rcpp(int m, int n, int kind, Rcpp::IntegerVector M, double q, Rcpp::NumericVector w_vec, double tol);
+RcppExport SEXP _KSgeneral_KS2sample_Rcpp(SEXP mSEXP, SEXP nSEXP, SEXP kindSEXP, SEXP MSEXP, SEXP qSEXP, SEXP w_vecSEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type kind(kindSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type M(MSEXP);
+    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w_vec(w_vecSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(KS2sample_Rcpp(m, n, kind, M, q, w_vec, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Kuiper2sample_Rcpp
+double Kuiper2sample_Rcpp(int m, int n, Rcpp::IntegerVector M, double q, double tol);
+RcppExport SEXP _KSgeneral_Kuiper2sample_Rcpp(SEXP mSEXP, SEXP nSEXP, SEXP MSEXP, SEXP qSEXP, SEXP tolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type M(MSEXP);
+    Rcpp::traits::input_parameter< double >::type q(qSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(Kuiper2sample_Rcpp(m, n, M, q, tol));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_KSgeneral_ks_c_cdf_Rcpp", (DL_FUNC) &_KSgeneral_ks_c_cdf_Rcpp, 1},
+    {"_KSgeneral_KS2sample_Rcpp", (DL_FUNC) &_KSgeneral_KS2sample_Rcpp, 7},
+    {"_KSgeneral_Kuiper2sample_Rcpp", (DL_FUNC) &_KSgeneral_Kuiper2sample_Rcpp, 5},
     {NULL, NULL, 0}
 };
 

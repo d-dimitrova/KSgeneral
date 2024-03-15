@@ -4,7 +4,7 @@
 Computes the p-value for a one-sample two-sided Kolmogorov-Smirnov test when the cdf under the null hypothesis is purely discrete
 }
 \description{
-Computes the p-value \eqn{P(D_{n} \ge d_{n})}, where \eqn{d_{n}} is the value of the KS test statistic computed based on a data sample \eqn{\{x_{1}, ..., x_{n}\}}, when \eqn{F(x)} is purely discrete, using the Exact-KS-FFT method expressing the p-value as a double-boundary non-crossing probability for a homogeneous Poisson process, which is then efficiently computed using FFT (see Dimitrova, Kaishev, Tan (2017)).
+Computes the p-value \eqn{P(D_{n} \ge d_{n})}, where \eqn{d_{n}} is the value of the KS test statistic computed based on a data sample \eqn{\{x_{1}, ..., x_{n}\}}, when \eqn{F(x)} is purely discrete, using the Exact-KS-FFT method expressing the p-value as a double-boundary non-crossing probability for a homogeneous Poisson process, which is then efficiently computed using FFT (see Dimitrova, Kaishev, Tan (2020)).
 }
 \usage{
 disc_ks_test(x, y, ..., exact = NULL, tol = 1e-08, sim.size = 1e+06, num.sim = 10)
@@ -24,7 +24,7 @@ disc_ks_test(x, y, ..., exact = NULL, tol = 1e-08, sim.size = 1e+06, num.sim = 1
   logical variable specifying whether one wants to compute exact p-value \eqn{P(D_{n} \ge d_{n})} using the Exact-KS-FFT method, in which case \code{exact = TRUE} or wants to compute an approximate p-value \eqn{P(D_{n} \ge d_{n})} using the simulation-based algorithm of Wood and Altavela (1978), in which case \code{exact = FALSE}. When \code{exact = NULL} and \code{n <= 100000}, the exact \eqn{P(D_{n} \ge d_{n})} will be computed using the Exact-KS-FFT method. Otherwise, the asymptotic complementary cdf is computed based on Wood and Altavela (1978). By default, \code{exact = NULL}.
 }
   \item{tol}{
-      the value of \eqn{\epsilon} that is used to compute the values of \eqn{A_{i}} and \eqn{B_{i}}, \eqn{i = 1, ..., n}, as detailed in Step 1 of Section 2.1 in Dimitrova, Kaishev and Tan (2017) (see also (ii) in the Procedure Exact-KS-FFT therein). By default, \code{tol = 1e-08}. Note that a value of \code{NA} or \code{0} will lead to an error!
+      the value of \eqn{\epsilon} that is used to compute the values of \eqn{A_{i}} and \eqn{B_{i}}, \eqn{i = 1, ..., n}, as detailed in Step 1 of Section 2.1 in Dimitrova, Kaishev and Tan (2020) (see also (ii) in the Procedure Exact-KS-FFT therein). By default, \code{tol = 1e-08}. Note that a value of \code{NA} or \code{0} will lead to an error!
 
 }
   \item{sim.size}{
@@ -40,10 +40,10 @@ disc_ks_test(x, y, ..., exact = NULL, tol = 1e-08, sim.size = 1e+06, num.sim = 1
 
 Given a random sample \eqn{\{X_{1}, ..., X_{n}\}} of size \code{n} with an empirical cdf \eqn{F_{n}(x)}, the two-sided Kolmogorov-Smirnov goodness-of-fit statistic is defined as \eqn{D_{n} = \sup | F_{n}(x) - F(x) | }, where \eqn{F(x)} is the cdf of a prespecified theoretical distribution under the null hypothesis \eqn{H_{0}}, that \eqn{\{X_{1}, ..., X_{n}\}} comes from \eqn{F(x)}.
 
-The function \code{\link{disc_ks_test}} implements the Exact-KS-FFT method expressing the p-value as a double-boundary non-crossing probability for a homogeneous Poisson process, which is then efficiently computed using FFT (see Dimitrova, Kaishev, Tan (2017)).
+The function \code{\link{disc_ks_test}} implements the Exact-KS-FFT method expressing the p-value as a double-boundary non-crossing probability for a homogeneous Poisson process, which is then efficiently computed using FFT (see Dimitrova, Kaishev, Tan (2020)).
 It represents an accurate and fast (run time \eqn{O(n^{2}log(n))}) alternative to the function \code{\link{ks.test}} from the package \pkg{dgof}, which computes a p-value \eqn{P(D_{n} \ge d_{n})}, where \eqn{d_{n}} is the value of the KS test statistic computed based on a user provided data sample \eqn{\{x_{1}, ..., x_{n}\}}, assuming \eqn{F(x)} is purely discrete.
 
-In the function \code{\link{ks.test}}, the p-value for a one-sample two-sided KS test is calculated by combining the approaches of Gleser (1985) and Niederhausen (1981). However, the function \code{\link{ks.test}} due to Arnold and Emerson (2011) only provides exact p-values for \code{n} \eqn{\le} 30, since as noted by the authors, when \code{n} is large, numerical instabilities may occur. In the latter case, \code{\link{ks.test}} uses simulation to approximate p-values, which may be rather slow and inaccurate (see Table 6 of Dimitrova, Kaishev, Tan (2017)).
+In the function \code{\link{ks.test}}, the p-value for a one-sample two-sided KS test is calculated by combining the approaches of Gleser (1985) and Niederhausen (1981). However, the function \code{\link{ks.test}} due to Arnold and Emerson (2011) only provides exact p-values for \code{n} \eqn{\le} 30, since as noted by the authors, when \code{n} is large, numerical instabilities may occur. In the latter case, \code{\link{ks.test}} uses simulation to approximate p-values, which may be rather slow and inaccurate (see Table 6 of Dimitrova, Kaishev, Tan (2020)).
 
 Thus, making use of the Exact-KS-FFT method, the function \code{\link{disc_ks_test}} provides an exact and highly computationally efficient (alternative) way of computing the p-value \eqn{P(D_{n} \ge d_{n})}, when \eqn{F(x)} is purely discrete.
 
@@ -61,8 +61,7 @@ A list with class "htest" containing the following components:
 \references{
 Arnold T.A., Emerson J.W. (2011). "Nonparametric Goodness-of-Fit Tests for Discrete Null Distributions". The R Journal, \bold{3}(2), 34-39.
 
-Dimitrova D.S, Kaishev V.K, Tan S. (2017) "Computing the Kolmogorov-Smirnov Distribution When the Underlying cdf is Purely Discrete, Mixed or Continuous".
-\url{http://openaccess.city.ac.uk/18541}
+Dimitrina S. Dimitrova, Vladimir K. Kaishev, Senren Tan. (2020) "Computing the Kolmogorov-Smirnov Distribution When the Underlying CDF is Purely Discrete, Mixed or Continuous". Journal of Statistical Software, \bold{95}(10): 1-42. doi:10.18637/jss.v095.i10.
 
 Gleser L.J. (1985). "Exact Power of Goodness-of-Fit Tests of Kolmogorov Type for Discontinuous Distributions". Journal of the American Statistical Association, \bold{80}(392), 954-958.
 
@@ -80,7 +79,7 @@ Wood C.L., Altavela M.M. (1978). "Large-Sample Results for Kolmogorov-Smirnov St
 # Comparison of results obtained from dgof::ks.test
 # and KSgeneral::disc_ks_test, when F(x) follows the discrete
 # Uniform[1, 10] distribution as in Example 3.5 of
-# Dimitrova, Kaishev, Tan (2017)
+# Dimitrova, Kaishev, Tan (2020)
 
 # When the sample size is larger than 100, the
 # function dgof::ks.test will be numerically

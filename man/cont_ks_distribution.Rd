@@ -28,18 +28,17 @@ More precisely, in these packages, the exact p-value, \eqn{P(D_{n} \ge q)} is co
 Another limitation of the functions \code{\link{ks.test}} is that the sample size should be less than 100, and the computation time is \eqn{O(n^{3})}.
 In contrast, the function \code{\link{cont_ks_cdf}} provides results with at least 10 correct digits after the decimal point for sample sizes \eqn{n} up to 100000 and computation time of 16 seconds on a machine with an 2.5GHz Intel Core i5 processor with 4GB RAM, running MacOS X Yosemite.
 For \code{n} > 100000, accurate results can still be computed with similar accuracy, but at a higher computation time.
-See Dimitrova, Kaishev, Tan (2017), Appendix B for further details and examples.
+See Dimitrova, Kaishev, Tan (2020), Appendix B for further details and examples.
 }
 \value{
 Numeric value corresponding to \eqn{P(D_{n} \le q)}.
 }
 \source{
-Based on the C++ code available at \url{http://github.com/mosco/crossing-probability} developed by Moscovich and Nadler (2017).
-See also Dimitrova, Kaishev, Tan (2017) for more details.
+Based on the C++ code available at \url{https://github.com/mosco/crossing-probability} developed by Moscovich and Nadler (2017).
+See also Dimitrova, Kaishev, Tan (2020) for more details.
 }
 \references{
-Dimitrova D.S, Kaishev V.K, Tan S. (2017) "Computing the Kolmogorov-Smirnov Distribution When the Underlying cdf is Purely Discrete, Mixed or Continuous".
-\url{http://openaccess.city.ac.uk/18541}
+Dimitrina S. Dimitrova, Vladimir K. Kaishev, Senren Tan. (2020) "Computing the Kolmogorov-Smirnov Distribution When the Underlying CDF is Purely Discrete, Mixed or Continuous". Journal of Statistical Software, \bold{95}(10): 1-42. doi:10.18637/jss.v095.i10.
 
 Marsaglia G., Tsang WW., Wang J. (2003). "Evaluating Kolmogorov's Distribution". Journal of Statistical Software, \bold{8}(18), 1-4.
 
@@ -63,7 +62,7 @@ q<-1:500/500
 plot(q, sapply(q, function(x) KSgeneral::cont_ks_cdf(x, n)), type='l')
 
 ## Compute P(D_{n} <= q) for n = 40, nq^{2} = 0.76 as shown
-## in Table 9 of Dimitrova, Kaishev, Tan (2017)
+## in Table 9 of Dimitrova, Kaishev, Tan (2020)
 
 KSgeneral::cont_ks_cdf(sqrt(0.76/40), 40)
 
