@@ -4,9 +4,9 @@ Version: 2.0.0
 Title: Computing P-Values of the One-Sample K-S Test and the Two-Sample
         K-S and Kuiper Tests for (Dis)Continuous Null Distribution
 Author: Dimitrina S. Dimitrova <D.Dimitrova@city.ac.uk>,
+        Yun Jia <yunjia2019@gmail.com>,
         Vladimir K. Kaishev <Vladimir.Kaishev.1@city.ac.uk>,
-        Senren Tan <raymondtsrtsr@outlook.com>,
-        Yun Jia <yunjia2019@gmail.com>
+        Senren Tan <raymondtsrtsr@outlook.com>
 Maintainer: Dimitrina S. Dimitrova <D.Dimitrova@city.ac.uk>
 Depends: R (>= 3.3.0)
 SystemRequirements: fftw3 (>=3.3.4)
@@ -21,6 +21,6 @@ LazyData: true
 Imports: Rcpp (>= 0.12.12), MASS, dgof
 LinkingTo: Rcpp
 NeedsCompilation: yes
-Packaged: 2023-09-22 12:48:09 UTC; jy
+Packaged: 2024-05-20 17:22:45 UTC; jy
 Repository: CRAN
-Date/Publication: 2023-07-10 19:10:09 UTC
+Date/Publication: 2024-05-18 19:10:09 UTC
