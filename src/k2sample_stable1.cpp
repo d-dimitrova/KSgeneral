@@ -1,7 +1,7 @@
-#include<Rcpp.h>
-#include<algorithm>
-#include<numeric>
-#include<cmath>
+#include <algorithm>
+#include <numeric>
+#include <cmath>
+#include <vector>
  
 
 
@@ -9,8 +9,16 @@ const double one = 1.0, zero = 0.0, small = 1e-35, smalln = - 80.5904782547916, 
 const int iterup = 116, int_limit = 2147483647;
 
 using namespace std;
-using namespace Rcpp;
-double ks2sample_c_cpp(int nx, int ny, int kind, int M[], int lengthM, double q, double w_vec[], int lengthw, double tol){
+
+int gcd(int m, int n) {
+    while (n != 0) {
+        int r = m % n;
+        m = n;
+        n = r;
+    }
+    return m < 0 ? -m : m;
+}
+double ks2sample_c_cpp(int nx, int ny, int kind, const int M[], int lengthM, double q, const double w_vec[], int lengthw, double tol){
 // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
 // P-value calculation for the weighted generalized two-sample Kolmogorov-Smirnov tests.
 // The tests are conditional on ties in the pooled sample.
@@ -18,7 +26,7 @@ double ks2sample_c_cpp(int nx, int ny, int kind, int M[], int lengthM, double q,
    double slope(0), delta(0), deviat(0), dl(0), scl(0), pval(0), eps(1e-6);
    bool newrct = true;
 
-   double* P = new double[nx+2]();
+   std::vector<double> P(static_cast<size_t>(nx) + 2, 0.0);
    eps = tol;
    if((tol<=0) || (tol>1e-6)) eps = 1e-6;
    scl = one;
@@ -119,7 +127,6 @@ double ks2sample_c_cpp(int nx, int ny, int kind, int M[], int lengthM, double q,
 		P[iris + 1] = (iri == l) ? scl : zero;
    }
    dl = P[nx] + P[nx - 1];
-   delete [] P;
    if (dl == zero) return 1.0;
    if(nofdiv == 0)
    {
@@ -142,7 +149,7 @@ double ks2sample_c_cpp(int nx, int ny, int kind, int M[], int lengthM, double q,
    
 }
 
-double ks2sample_cpp(int nx, int ny, int kind, int M[], int lengthM, double q, double w_vec[], int lengthw, double tol){
+double ks2sample_cpp(int nx, int ny, int kind, const int M[], int lengthM, double q, const double w_vec[], int lengthw, double tol){
   // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
   // P-value calculation for the weighted generalized two-sample Kolmogorov-Smirnov tests.
   // The tests are conditional on ties in the pooled sample.
@@ -150,8 +157,8 @@ double ks2sample_cpp(int nx, int ny, int kind, int M[], int lengthM, double q, d
   double slope(0), delta(0), deviat(0), dl(0), pval(0), eps(1e-6);
   bool newrct = true;
   
-  double* P = new double[nx+2]();
-  double* Q = new double[nx+2]();
+  std::vector<double> P(static_cast<size_t>(nx) + 2, 0.0);
+  std::vector<double> Q(static_cast<size_t>(nx) + 2, 0.0);
   eps = tol;
   if((tol<=0) || (tol>1e-6)) eps = 1e-6;
   delta = q - eps;
@@ -228,22 +235,20 @@ double ks2sample_cpp(int nx, int ny, int kind, int M[], int lengthM, double q, d
     P[iles - 1] = (ile == 0) ? zero : one;
     P[iris + 1] = (iri == l) ? zero : one;
   }
-  delete [] Q;
   pval = (ny * P[nx] + nx * P[nx - 1])/ (double)(n);
-  delete [] P;
   return pval; 
 }
 
 
-double kuiperks_p(int nx, int ny, int M[], int lengthM, double dstatup, double dstatdown , double tol){
+double kuiperks_p(int nx, int ny, const int M[], int lengthM, double dstatup, double dstatdown , double tol){
 // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
 // P-value calculation for the weighted generalized two-sample Kolmogorov-Smirnov tests.
 // The tests are conditional on ties in the pooled sample.
    int i(0), icat(1), ile(0), ile2(0), ileft(0), iles(0), iri(0), iri2(0), iright(0), iris(0), jlow(0), jupp(0), l(0), l2(0), n(0), nties(0);
    double slope(0), deltalow(0), deltaup(0), deviatlow(0), deviatup(0), pval(0), dl(0);
    bool newrct = true;
-   double* P = new double[nx+2]();
-   double* Q = new double[nx+2]();
+   std::vector<double> P(static_cast<size_t>(nx) + 2, 0.0);
+   std::vector<double> Q(static_cast<size_t>(nx) + 2, 0.0);
   
    P[0] = one;
    n = nx + ny;
@@ -299,20 +304,18 @@ double kuiperks_p(int nx, int ny, int M[], int lengthM, double dstatup, double d
     	P[iles - 1] = (ile == 0) ? zero : one;
     	P[iris + 1] = (iri == l) ? zero : one;
    }
-  delete [] Q;
   pval = (ny * P[nx] + nx * P[nx - 1])/ (double)(n);
-  delete [] P;
   return pval; 
 }
 
 
-double kuiperks_n(int nx, int ny, int M[], int lengthM, double dstatup, double dstatdown , double tol){
+double kuiperks_n(int nx, int ny, const int M[], int lengthM, double dstatup, double dstatdown , double tol){
 // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
 // counts the number of trajectories with their one-sided KS statistics (supremum and infimum) equal or smaller than dstatup and dstatdown respectively;
    int i(0), ic(0), icat(1), ile(0), ile2(0), ileft(0), iles(0), iri(0), iri2(0), iright(0), iris(0), jlow(0), jupp(0), l(0), l2(0), n(0), nofdiv(0), nties(0);
    double slope(0), deltalow(0), deltaup(0), deviatlow(0), deviatup(0), scl(0), nval(0), dl(0);
    bool newrct = true;
-   double* P = new double[nx+2]();
+   std::vector<double> P(static_cast<size_t>(nx) + 2, 0.0);
    
    P[0] = one;
    n = nx + ny;
@@ -395,7 +398,6 @@ double kuiperks_n(int nx, int ny, int M[], int lengthM, double dstatup, double d
    }
    dl = P[nx] + P[nx - 1];
    if (dl == zero) return -2.0;
-   delete [] P;
    nval = log(dl) - nofdiv * smalln;
    return nval;
 }
@@ -406,7 +408,7 @@ int lcm(int m, int n)
     return m % n == 0 ? n : gcd(n, m % n);
 }
 
-double kuiper2sample_c_cpp(int nx, int ny, int M[], int lengthM, double q)
+double kuiper2sample_c_cpp(int nx, int ny, const int M[], int lengthM, double q)
 {
 	double nxydouble(0), eps(1e-6), pval(0);
 	long double lfacto(0), neg(0), pos(0);
@@ -438,8 +440,8 @@ double kuiper2sample_c_cpp(int nx, int ny, int M[], int lengthM, double q)
 	else if((C > 0) && (C <= nxy - 1))
 	{
 
-		long double* pval_vec_pos = new long double[C+1]();
-		long double* pval_vec_neg = new long double[C]();
+		std::vector<long double> pval_vec_pos(static_cast<size_t>(C) + 1, 0.0L);
+		std::vector<long double> pval_vec_neg(static_cast<size_t>(C), 0.0L);
 		
 		pval_vec_pos[C] = kuiperks_n(nx, ny, M, lengthM, C / nxydouble, zero, eps);
 		if(pval_vec_pos[C] < -2.5) return -3.0;
@@ -471,15 +473,13 @@ double kuiper2sample_c_cpp(int nx, int ny, int M[], int lengthM, double q)
 			pos += (pval_vec_pos[C/2] >= 0) ? exp(pval_vec_pos[C/2] - minmum) : zero;
 			neg += (pval_vec_neg[C/2] >= 0) ? exp(pval_vec_neg[C/2] - minmum) : zero;
 		}
-		delete [] pval_vec_pos;
-		delete [] pval_vec_neg;
 
 	}
 	else
 	{
 		p = 2 * nxy - C;
-		long double* pval_vec_pos = new long double[p + 1]();
-		long double* pval_vec_neg = new long double[p]();
+		std::vector<long double> pval_vec_pos(static_cast<size_t>(p) + 1, 0.0L);
+		std::vector<long double> pval_vec_neg(static_cast<size_t>(p), 0.0L);
 // Find  the log number of trajectories with specific bound of Kolmogorov-Smirnov statistic		
 		pval_vec_pos[p] = kuiperks_n(nx, ny, M, lengthM, double(1.0), (C - nxy) / nxydouble , eps);
 		if(pval_vec_pos[p] < -2.5) return -3.0;
@@ -508,8 +508,6 @@ double kuiper2sample_c_cpp(int nx, int ny, int M[], int lengthM, double q)
 			pos += (pval_vec_pos[C/2] >= 0) ? exp(pval_vec_pos[C/2] - minmum) : zero;
 			neg += (pval_vec_neg[C/2] >= 0) ? exp(pval_vec_neg[C/2] - minmum) : zero;
 		}
-		delete [] pval_vec_pos;
-		delete [] pval_vec_neg;
 		
 	}
 	
@@ -523,7 +521,7 @@ double kuiper2sample_c_cpp(int nx, int ny, int M[], int lengthM, double q)
 }
 
 
-double kuiper2sample_cpp(int nx, int ny, int M[], int lengthM, double q)
+double kuiper2sample_cpp(int nx, int ny, const int M[], int lengthM, double q)
 {
 	double nxydouble(0), eps(1e-6), pval(0);
 	int p(0), C(0), i(0), nxy(0);
@@ -576,39 +574,4 @@ double kuiper2sample_cpp(int nx, int ny, int M[], int lengthM, double q)
 	return pval;
 		
 
-}
- 
-
-// [[Rcpp::export]]
-double KS2sample_c_Rcpp(int m, int n, int kind, Rcpp::IntegerVector M, double q, Rcpp::NumericVector w_vec, double tol){
-	  const int lengthM=M.size();
-    const int lengthw=w_vec.size();
-    double pval=0;
-    pval = ks2sample_c_cpp(m,n,kind,M.begin(),lengthM,q,w_vec.begin(),lengthw,tol);
-    return(pval);
-}
-
-// [[Rcpp::export]]
-double Kuiper2sample_Rcpp(int m, int n, Rcpp::IntegerVector M, double q){
-    const int lengthM=M.size();
-    double pval = 0;
-    pval = kuiper2sample_cpp(m,n,M.begin(),lengthM,q);
-    return(pval);
-}
-
-// [[Rcpp::export]]
-double Kuiper2sample_c_Rcpp(int m, int n, Rcpp::IntegerVector M, double q){
-    const int lengthM=M.size();
-    double pval = 0;
-    pval = kuiper2sample_c_cpp(m,n,M.begin(),lengthM,q);
-    return(pval);
-}
- 
-// [[Rcpp::export]]
-double KS2sample_Rcpp(int m, int n, int kind, Rcpp::IntegerVector M, double q, Rcpp::NumericVector w_vec, double tol){
-    const int lengthM=M.size();
-    const int lengthw=w_vec.size();
-    double pval=0;
-    pval = ks2sample_cpp(m,n,kind,M.begin(),lengthM,q,w_vec.begin(),lengthw,tol);
-    return(pval);
 }

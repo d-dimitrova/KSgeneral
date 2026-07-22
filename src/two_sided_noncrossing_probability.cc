@@ -1,6 +1,5 @@
 #include <algorithm>
 #include <cmath>
-#include <cassert>
 #include <iostream>
 #include <stdexcept>
 #include <numeric>
@@ -11,11 +10,6 @@
 #include "common.h"
 #include "poisson_pmf.h"
 #include "string_utils.h"
-/*************/
-#include <Rcpp.h>
-using namespace Rcpp;
-/*************/
-
 using namespace std;
 
 enum BoundType {H_STEP, G_STEP, END};
@@ -32,7 +26,9 @@ static bool operator<(Bound b0, Bound b1)
 
 static vector<Bound> join_all_bounds(const vector<double>& h_steps, const vector<double>& g_steps)
 {
-    assert(h_steps.size() >= g_steps.size());
+    if (h_steps.size() < g_steps.size()) {
+        throw invalid_argument("upper boundary must have at least as many steps as lower boundary");
+    }
 
     vector<Bound> bounds;
     bounds.reserve(h_steps.size()+g_steps.size()+1);
@@ -62,13 +58,11 @@ static vector<Bound> join_all_bounds(const vector<double>& h_steps, const vector
 static bool lower_and_upper_boundaries_cross(const vector<double>& g_steps, const vector<double>& h_steps)
 {
     if (g_steps.size() > h_steps.size()) {
-        Rcpp::Rcout << "The lower and upper boundaries cross: g(1) > h(1).\n";
-        return true;
+        throw invalid_argument("lower and upper boundaries cross: g(1) > h(1)");
     }
     for (size_t i = 0; i < g_steps.size(); ++i) {
         if (g_steps[i] < h_steps[i]) {
-            Rcpp::Rcout << "The lower and upper boundaries cross! i=" << i << ".\n";
-            return true;
+            throw invalid_argument("lower and upper boundaries cross");
         }
     }
     return false;
@@ -114,7 +108,9 @@ vector<double> poisson_process_noncrossing_probability(double intensity, const v
             buffers.get_src()[g_step_count] = 0.0; // Not strictly necessary. This just keeps the arrays cleaner when printing.
             ++g_step_count;
         } else {
-            assert(tag == END);
+            if (tag != END) {
+                throw logic_error("unexpected boundary tag");
+            }
             break;
         }
         prev_location = bounds[i].location;
