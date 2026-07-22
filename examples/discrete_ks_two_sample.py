@@ -19,6 +19,19 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+dll_directory_handles = None
+if sys.platform == "win32" and sys.version_info >= (3, 8):
+    dll_directory_handles = []
+    for directory in os.environ.get("PATH", "").split(os.pathsep):
+        directory = directory.strip().strip('"')
+
+        if directory and os.path.isdir(directory):
+            try:
+                handle = os.add_dll_directory(directory)
+                dll_directory_handles.append(handle)
+            except OSError:
+                pass
+
 from python.ksgeneral_ctypes import load
 
 
