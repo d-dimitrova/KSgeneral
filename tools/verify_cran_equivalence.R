@@ -39,7 +39,7 @@ writeLines(c(
   '  disc_ks_test = disc_ks_test(c(0, 1, 1, 2, 3), discrete_cdf)$p.value,',
   '  mixed_ks_c_cdf = mixed_ks_c_cdf(0.25, 8, c(0, 1), Mixed_cdf_example),',
   '  mixed_ks_test = mixed_ks_test(c(0, 0.2, 1, 1.5, 2.0), c(0, 1), Mixed_cdf_example)$p.value,',
-  '  KS2sample_two_sided = KS2sample(c(1, 1, 2, 4), c(1, 3, 3, 4), alternative = "two-sided")$p.value,',
+  '  KS2sample_two_sided = KS2sample(c(1, 1, 2, 4), c(1, 3, 3, 4), alternative = "two.sided")$p.value,',
   '  KS2sample_less = KS2sample(c(1, 1, 2, 4), c(1, 3, 3, 4), alternative = "less")$p.value,',
   '  KS2sample_greater = KS2sample(c(1, 1, 2, 4), c(1, 3, 3, 4), alternative = "greater")$p.value,',
   '  Kuiper2sample = Kuiper2sample(c(0.1, 0.1, 0.5, 0.9), c(0.2, 0.5, 0.5, 0.8))$p.value',
