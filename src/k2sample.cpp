@@ -1,4 +1,5 @@
-#include<Rcpp.h>
+#include "KSgeneral.h"
+
 #include<algorithm>
 #include<numeric>
 #include<cmath>
@@ -9,8 +10,7 @@ const double one = 1.0, zero = 0.0, small = 1e-35, smalln = - 80.5904782547916, 
 const int iterup = 116, int_limit = 2147483647;
 
 using namespace std;
-using namespace Rcpp;
-double ks2sample_c_cpp(int nx, int ny, int kind, int M[], int lengthM, double q, double w_vec[], int lengthw, double tol){
+double ks2sample_c_cpp(int nx, int ny, int kind, const int M[], int lengthM, double q, const double w_vec[], int lengthw, double tol){
 // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
 // P-value calculation for the weighted generalized two-sample Kolmogorov-Smirnov tests.
 // The tests are conditional on ties in the pooled sample.
@@ -142,7 +142,7 @@ double ks2sample_c_cpp(int nx, int ny, int kind, int M[], int lengthM, double q,
    
 }
 
-double ks2sample_cpp(int nx, int ny, int kind, int M[], int lengthM, double q, double w_vec[], int lengthw, double tol){
+double ks2sample_cpp(int nx, int ny, int kind, const int M[], int lengthM, double q, const double w_vec[], int lengthw, double tol){
   // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
   // P-value calculation for the weighted generalized two-sample Kolmogorov-Smirnov tests.
   // The tests are conditional on ties in the pooled sample.
@@ -235,7 +235,7 @@ double ks2sample_cpp(int nx, int ny, int kind, int M[], int lengthM, double q, d
 }
 
 
-double kuiperks_p(int nx, int ny, int M[], int lengthM, double dstatup, double dstatdown , double tol){
+double kuiperks_p(int nx, int ny, const int M[], int lengthM, double dstatup, double dstatdown , double tol){
 // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
 // P-value calculation for the weighted generalized two-sample Kolmogorov-Smirnov tests.
 // The tests are conditional on ties in the pooled sample.
@@ -306,7 +306,7 @@ double kuiperks_p(int nx, int ny, int M[], int lengthM, double dstatup, double d
 }
 
 
-double kuiperks_n(int nx, int ny, int M[], int lengthM, double dstatup, double dstatdown , double tol){
+double kuiperks_n(int nx, int ny, const int M[], int lengthM, double dstatup, double dstatdown , double tol){
 // Based on ALGORITHM AS 288 APPL.STATIST. (1994), VOL.43, NO.1
 // counts the number of trajectories with their one-sided KS statistics (supremum and infimum) equal or smaller than dstatup and dstatdown respectively;
    int i(0), ic(0), icat(1), ile(0), ile2(0), ileft(0), iles(0), iri(0), iri2(0), iright(0), iris(0), jlow(0), jupp(0), l(0), l2(0), n(0), nofdiv(0), nties(0);
@@ -406,7 +406,7 @@ int lcm(int m, int n)
     return m % n == 0 ? n : gcd(n, m % n);
 }
 
-double kuiper2sample_c_cpp(int nx, int ny, int M[], int lengthM, double q)
+double kuiper2sample_c_cpp(int nx, int ny, const int M[], int lengthM, double q)
 {
 	double nxydouble(0), eps(1e-6), pval(0);
 	long double lfacto(0), neg(0), pos(0);
@@ -523,7 +523,7 @@ double kuiper2sample_c_cpp(int nx, int ny, int M[], int lengthM, double q)
 }
 
 
-double kuiper2sample_cpp(int nx, int ny, int M[], int lengthM, double q)
+double kuiper2sample_cpp(int nx, int ny, const int M[], int lengthM, double q)
 {
 	double nxydouble(0), eps(1e-6), pval(0);
 	int p(0), C(0), i(0), nxy(0);
@@ -577,38 +577,59 @@ double kuiper2sample_cpp(int nx, int ny, int M[], int lengthM, double q)
 		
 
 }
- 
 
-// [[Rcpp::export]]
-double KS2sample_c_Rcpp(int m, int n, int kind, Rcpp::IntegerVector M, double q, Rcpp::NumericVector w_vec, double tol){
-	  const int lengthM=M.size();
-    const int lengthw=w_vec.size();
-    double pval=0;
-    pval = ks2sample_c_cpp(m,n,kind,M.begin(),lengthM,q,w_vec.begin(),lengthw,tol);
-    return(pval);
+namespace KSgeneral {
+
+double KS2sample(int m,
+                 int n,
+                 int kind,
+                 const std::vector<int>& M,
+                 double q,
+                 const std::vector<double>& w_vec,
+                 double tol)
+{
+    return ks2sample_cpp(m, n, kind,
+                         M.data(), static_cast<int>(M.size()),
+                         q,
+                         w_vec.data(), static_cast<int>(w_vec.size()),
+                         tol);
 }
 
-// [[Rcpp::export]]
-double Kuiper2sample_Rcpp(int m, int n, Rcpp::IntegerVector M, double q){
-    const int lengthM=M.size();
-    double pval = 0;
-    pval = kuiper2sample_cpp(m,n,M.begin(),lengthM,q);
-    return(pval);
+
+double KS2sample_c(int m,
+                   int n,
+                   int kind,
+                   const std::vector<int>& M,
+                   double q,
+                   const std::vector<double>& w_vec,
+                   double tol)
+{
+    return ks2sample_c_cpp(m, n, kind,
+                           M.data(), static_cast<int>(M.size()),
+                           q,
+                           w_vec.data(), static_cast<int>(w_vec.size()),
+                           tol);
 }
 
-// [[Rcpp::export]]
-double Kuiper2sample_c_Rcpp(int m, int n, Rcpp::IntegerVector M, double q){
-    const int lengthM=M.size();
-    double pval = 0;
-    pval = kuiper2sample_c_cpp(m,n,M.begin(),lengthM,q);
-    return(pval);
+
+double Kuiper2sample(int m,
+                     int n,
+                     const std::vector<int>& M,
+                     double q)
+{
+    return kuiper2sample_cpp(
+        m, n, M.data(), static_cast<int>(M.size()), q);
 }
- 
-// [[Rcpp::export]]
-double KS2sample_Rcpp(int m, int n, int kind, Rcpp::IntegerVector M, double q, Rcpp::NumericVector w_vec, double tol){
-    const int lengthM=M.size();
-    const int lengthw=w_vec.size();
-    double pval=0;
-    pval = ks2sample_cpp(m,n,kind,M.begin(),lengthM,q,w_vec.begin(),lengthw,tol);
-    return(pval);
+
+
+double Kuiper2sample_c(int m,
+                       int n,
+                       const std::vector<int>& M,
+                       double q)
+{
+    return kuiper2sample_c_cpp(
+        m, n, M.data(), static_cast<int>(M.size()), q);
 }
+
+} // namespace KSgeneral
+

@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cassert>
-#include <iostream>
 #include <stdexcept>
 #include <numeric>
 #include <algorithm>
@@ -11,11 +10,6 @@
 #include "common.h"
 #include "poisson_pmf.h"
 #include "string_utils.h"
-/*************/
-#include <Rcpp.h>
-using namespace Rcpp;
-/*************/
-
 using namespace std;
 
 enum BoundType {H_STEP, G_STEP, END};
@@ -62,12 +56,10 @@ static vector<Bound> join_all_bounds(const vector<double>& h_steps, const vector
 static bool lower_and_upper_boundaries_cross(const vector<double>& g_steps, const vector<double>& h_steps)
 {
     if (g_steps.size() > h_steps.size()) {
-        Rcpp::Rcout << "The lower and upper boundaries cross: g(1) > h(1).\n";
         return true;
     }
     for (size_t i = 0; i < g_steps.size(); ++i) {
         if (g_steps[i] < h_steps[i]) {
-            Rcpp::Rcout << "The lower and upper boundaries cross! i=" << i << ".\n";
             return true;
         }
     }

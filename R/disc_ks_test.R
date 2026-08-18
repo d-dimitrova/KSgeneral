@@ -178,12 +178,7 @@ disc_ks_test <- function(x, y, ..., exact = NULL, tol = 1e-8, sim.size = 1000000
       upper_rect <- upper_rectangles_1(STATISTIC, n, y, z, tol)
       lower_rect <- lower_rectangles_1(STATISTIC, n, y, z, tol)
 
-      df <- data.frame(rbind(upper_rect, lower_rect))
-      write.table(df,"Boundary_Crossing_Time.txt", sep = ", ", row.names = FALSE, col.names = FALSE)
-
-      PVAL <- KSgeneral::ks_c_cdf_Rcpp(n)
-
-      file.remove("Boundary_Crossing_Time.txt")
+      PVAL <- ks_c_cdf(n, lower_rect, upper_rect)
     }
     else {
       if ((n > 100000) && (z > 15)){
@@ -225,9 +220,6 @@ disc_ks_test <- function(x, y, ..., exact = NULL, tol = 1e-8, sim.size = 1000000
     STATISTIC <- max(c(x, 1/n - x))
 
     PVAL <- KSgeneral::cont_ks_c_cdf(STATISTIC, n)
-
-  # file.remove("Boundary_Crossing_Time.txt")
-
     nm_alternative <- "two-sided"
   }
 
@@ -237,9 +229,6 @@ disc_ks_test <- function(x, y, ..., exact = NULL, tol = 1e-8, sim.size = 1000000
   RVAL <- list(statistic = STATISTIC, p.value = PVAL, alternative = nm_alternative, method = METHOD, data.name = DNAME)
 
   class(RVAL) <- "htest"
-
-  # file.remove("Boundary_Crossing_Time.txt")
-
   return(RVAL)
 
 }
