@@ -3,6 +3,7 @@
 #include<algorithm>
 #include<numeric>
 #include<cmath>
+#include<memory>
  
 
 
@@ -18,7 +19,6 @@ double ks2sample_c_cpp(int nx, int ny, int kind, const int M[], int lengthM, dou
    double slope(0), delta(0), deviat(0), dl(0), scl(0), pval(0), eps(1e-6);
    bool newrct = true;
 
-   double* P = new double[nx+2]();
    eps = tol;
    if((tol<=0) || (tol>1e-6)) eps = 1e-6;
    scl = one;
@@ -27,6 +27,7 @@ double ks2sample_c_cpp(int nx, int ny, int kind, const int M[], int lengthM, dou
    if((nx<1) || (ny<1) || (kind<1) || (kind>3) || (lengthw!=nx+ny-1)) return -1;
    if((accumulate(M,M+lengthM,0) != nx+ny) || (*min_element(M,M+lengthM)<1) || (*min_element(w_vec,w_vec+lengthw)<eps)) return -2.0;
    if(delta<zero) return 1.0;
+   std::unique_ptr<double[]> P(new double[nx+2]());
    P[0] = one;
 // Parameters to define a set for trajectories to lie within it
    n = nx + ny;
@@ -119,7 +120,6 @@ double ks2sample_c_cpp(int nx, int ny, int kind, const int M[], int lengthM, dou
 		P[iris + 1] = (iri == l) ? scl : zero;
    }
    dl = P[nx] + P[nx - 1];
-   delete [] P;
    if (dl == zero) return 1.0;
    if(nofdiv == 0)
    {
@@ -150,8 +150,6 @@ double ks2sample_cpp(int nx, int ny, int kind, const int M[], int lengthM, doubl
   double slope(0), delta(0), deviat(0), dl(0), pval(0), eps(1e-6);
   bool newrct = true;
   
-  double* P = new double[nx+2]();
-  double* Q = new double[nx+2]();
   eps = tol;
   if((tol<=0) || (tol>1e-6)) eps = 1e-6;
   delta = q - eps;
@@ -159,6 +157,8 @@ double ks2sample_cpp(int nx, int ny, int kind, const int M[], int lengthM, doubl
   if((nx<1) || (ny<1) || (kind<1) || (kind>3) || (lengthw!=nx+ny-1)) return -1;
   if((accumulate(M,M+lengthM,0) != nx+ny) || (*min_element(M,M+lengthM)<1) || (*min_element(w_vec,w_vec+lengthw)<eps)) return -2.0;
   if(delta<zero) return 1.0;
+  std::unique_ptr<double[]> P(new double[nx+2]());
+  std::unique_ptr<double[]> Q(new double[nx+2]());
   P[0] = one;
   // Parameters to define a set for trajectories to lie within it
   n = nx + ny;
@@ -228,9 +228,7 @@ double ks2sample_cpp(int nx, int ny, int kind, const int M[], int lengthM, doubl
     P[iles - 1] = (ile == 0) ? zero : one;
     P[iris + 1] = (iri == l) ? zero : one;
   }
-  delete [] Q;
   pval = (ny * P[nx] + nx * P[nx - 1])/ (double)(n);
-  delete [] P;
   return pval; 
 }
 
@@ -242,8 +240,8 @@ double kuiperks_p(int nx, int ny, const int M[], int lengthM, double dstatup, do
    int i(0), icat(1), ile(0), ile2(0), ileft(0), iles(0), iri(0), iri2(0), iright(0), iris(0), jlow(0), jupp(0), l(0), l2(0), n(0), nties(0);
    double slope(0), deltalow(0), deltaup(0), deviatlow(0), deviatup(0), pval(0), dl(0);
    bool newrct = true;
-   double* P = new double[nx+2]();
-   double* Q = new double[nx+2]();
+   std::unique_ptr<double[]> P(new double[nx+2]());
+   std::unique_ptr<double[]> Q(new double[nx+2]());
   
    P[0] = one;
    n = nx + ny;
@@ -299,9 +297,7 @@ double kuiperks_p(int nx, int ny, const int M[], int lengthM, double dstatup, do
     	P[iles - 1] = (ile == 0) ? zero : one;
     	P[iris + 1] = (iri == l) ? zero : one;
    }
-  delete [] Q;
   pval = (ny * P[nx] + nx * P[nx - 1])/ (double)(n);
-  delete [] P;
   return pval; 
 }
 
@@ -312,7 +308,7 @@ double kuiperks_n(int nx, int ny, const int M[], int lengthM, double dstatup, do
    int i(0), ic(0), icat(1), ile(0), ile2(0), ileft(0), iles(0), iri(0), iri2(0), iright(0), iris(0), jlow(0), jupp(0), l(0), l2(0), n(0), nofdiv(0), nties(0);
    double slope(0), deltalow(0), deltaup(0), deviatlow(0), deviatup(0), scl(0), nval(0), dl(0);
    bool newrct = true;
-   double* P = new double[nx+2]();
+   std::unique_ptr<double[]> P(new double[nx+2]());
    
    P[0] = one;
    n = nx + ny;
@@ -395,7 +391,6 @@ double kuiperks_n(int nx, int ny, const int M[], int lengthM, double dstatup, do
    }
    dl = P[nx] + P[nx - 1];
    if (dl == zero) return -2.0;
-   delete [] P;
    nval = log(dl) - nofdiv * smalln;
    return nval;
 }
@@ -438,8 +433,8 @@ double kuiper2sample_c_cpp(int nx, int ny, const int M[], int lengthM, double q)
 	else if((C > 0) && (C <= nxy - 1))
 	{
 
-		long double* pval_vec_pos = new long double[C+1]();
-		long double* pval_vec_neg = new long double[C]();
+		std::unique_ptr<long double[]> pval_vec_pos(new long double[C+1]());
+		std::unique_ptr<long double[]> pval_vec_neg(new long double[C]());
 		
 		pval_vec_pos[C] = kuiperks_n(nx, ny, M, lengthM, C / nxydouble, zero, eps);
 		if(pval_vec_pos[C] < -2.5) return -3.0;
@@ -471,15 +466,12 @@ double kuiper2sample_c_cpp(int nx, int ny, const int M[], int lengthM, double q)
 			pos += (pval_vec_pos[C/2] >= 0) ? exp(pval_vec_pos[C/2] - minmum) : zero;
 			neg += (pval_vec_neg[C/2] >= 0) ? exp(pval_vec_neg[C/2] - minmum) : zero;
 		}
-		delete [] pval_vec_pos;
-		delete [] pval_vec_neg;
-
 	}
 	else
 	{
 		p = 2 * nxy - C;
-		long double* pval_vec_pos = new long double[p + 1]();
-		long double* pval_vec_neg = new long double[p]();
+		std::unique_ptr<long double[]> pval_vec_pos(new long double[p + 1]());
+		std::unique_ptr<long double[]> pval_vec_neg(new long double[p]());
 // Find  the log number of trajectories with specific bound of Kolmogorov-Smirnov statistic		
 		pval_vec_pos[p] = kuiperks_n(nx, ny, M, lengthM, double(1.0), (C - nxy) / nxydouble , eps);
 		if(pval_vec_pos[p] < -2.5) return -3.0;
@@ -508,9 +500,6 @@ double kuiper2sample_c_cpp(int nx, int ny, const int M[], int lengthM, double q)
 			pos += (pval_vec_pos[C/2] >= 0) ? exp(pval_vec_pos[C/2] - minmum) : zero;
 			neg += (pval_vec_neg[C/2] >= 0) ? exp(pval_vec_neg[C/2] - minmum) : zero;
 		}
-		delete [] pval_vec_pos;
-		delete [] pval_vec_neg;
-		
 	}
 	
 	if( pval < 0){

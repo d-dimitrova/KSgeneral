@@ -11,7 +11,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // ks_c_cdf_direct
-double ks_c_cdf_direct(double n, std::vector<double> B_steps, std::vector<double> A_steps);
+Rcpp::List ks_c_cdf_direct(double n, std::vector<double> B_steps, std::vector<double> A_steps);
 RcppExport SEXP _KSgeneral_ks_c_cdf_direct(SEXP nSEXP, SEXP B_stepsSEXP, SEXP A_stepsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

@@ -1,4 +1,4 @@
-Kuiper2sample <- function(x, y, conservative = F, tol = 1e-08) {
+Kuiper2sample <- function(x, y, conservative = F, tail = T) {
   Varname <- paste(deparse(substitute(x)), "and", deparse(substitute(y)))
   Method2 <- NULL
   
@@ -33,7 +33,7 @@ Kuiper2sample <- function(x, y, conservative = F, tol = 1e-08) {
   
   names(DSTAT) <- "D"
   Method <- paste("Two-sample Kuiper Test", Method1, Method2)
-  result <- Kuiper2sample_Rcpp(Nx, Ny, M, DSTAT, tol)
+  result <- if (tail) Kuiper2sample_Rcpp(Nx, Ny, M, DSTAT) else Kuiper2sample_c_Rcpp(Nx, Ny, M, DSTAT)
   
   if(result < -2.5){
     stop("Calculation unstable")

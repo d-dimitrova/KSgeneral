@@ -1,7 +1,6 @@
 #include "k1sample.h"
 #include "KSgeneral.h"
 
-#include <algorithm>
 #include <cmath>
 #include <stdexcept>
 #include <utility>
@@ -9,35 +8,6 @@
 
 #include "read_boundaries_file.h"
 #include "two_sided_noncrossing_probability.h"
-
-namespace {
-
-void validate_one_sample_boundaries(long n,
-                                    const std::vector<double>& A,
-                                    const std::vector<double>& B)
-{
-    if (n <= 0) {
-        throw std::invalid_argument("n must be a positive integer");
-    }
-
-    if (A.size() != static_cast<std::size_t>(n) ||
-        B.size() != static_cast<std::size_t>(n)) {
-        throw std::invalid_argument("A and B must both have length n");
-    }
-
-    const auto valid_boundary = [](const std::vector<double>& x) {
-        return std::all_of(x.begin(), x.end(), [](double value) {
-            return std::isfinite(value) && value >= 0.0 && value <= 1.0;
-        }) && std::is_sorted(x.begin(), x.end());
-    };
-
-    if (!valid_boundary(A) || !valid_boundary(B)) {
-        throw std::invalid_argument(
-            "A and B must be nondecreasing finite vectors with values in [0, 1]");
-    }
-}
-
-} // namespace
 
 
 /*
@@ -64,14 +34,95 @@ double cont_ks_distribution(long n)
  * Internal direct-boundary Exact-KS-FFT calculation.
  *
  * B_steps and A_steps preserve the positional order used by the historical
- * file interface. The public API below accepts the natural (A, B) order.
+ * file interface.
+ *
+ * Boundary validation and crossing detection are deliberately combined in a
+ * single O(n) pass. This avoids the multiple full-vector scans and temporary
+ * logical vectors that equivalent R-level checks would require.
  */
-double ks_cdf_impl(long n,
-                   const std::vector<double>& B_steps,
-                   const std::vector<double>& A_steps)
+KSCdfResult ks_cdf_impl(
+    long n,
+    const std::vector<double>& B_steps,
+    const std::vector<double>& A_steps)
 {
+    if (n <= 0) {
+        throw std::invalid_argument("'n' must be a positive integer");
+    }
+
+    if (A_steps.size() != static_cast<std::size_t>(n) ||
+        B_steps.size() != static_cast<std::size_t>(n)) {
+        throw std::invalid_argument(
+            "'A' and 'B' must both have length 'n'");
+    }
+
+    bool has_nonfinite = false;
+    bool out_of_range = false;
+    bool not_nondecreasing = false;
+    long crossing_index = -1;
+
+    for (long i = 0; i < n; ++i) {
+        const double a = A_steps[static_cast<std::size_t>(i)];
+        const double b = B_steps[static_cast<std::size_t>(i)];
+
+        if (!std::isfinite(a) || !std::isfinite(b)) {
+            has_nonfinite = true;
+        }
+
+        if (a < 0.0 || a > 1.0 || b < 0.0 || b > 1.0) {
+            out_of_range = true;
+        }
+
+        if (i > 0) {
+            const std::size_t prev = static_cast<std::size_t>(i - 1);
+            if (a < A_steps[prev] || b < B_steps[prev]) {
+                not_nondecreasing = true;
+            }
+        }
+
+        if (crossing_index < 0 && b < a) {
+            crossing_index = i;
+        }
+    }
+
+    /*
+     * Keep the same validation priority as the previous R wrapper:
+     * finite/non-missing -> range -> monotonicity -> crossing warning.
+     */
+    if (has_nonfinite) {
+        throw std::invalid_argument(
+            "'A' and 'B' must contain only finite, non-missing values");
+    }
+
+    if (out_of_range) {
+        throw std::invalid_argument(
+            "'A' and 'B' must contain values in [0, 1]");
+    }
+
+    if (not_nondecreasing) {
+        throw std::invalid_argument(
+            "'A' and 'B' must be nondecreasing");
+    }
+
+    KSCdfResult result;
+    result.crossing_index = crossing_index;
+
+    if (crossing_index >= 0) {
+        /*
+         * The empirical process cannot remain between crossed boundaries.
+         * Thus the non-crossing probability is zero and the complementary
+         * probability returned by ks_c_cdf() is one.
+         */
+        result.probability = 1.0;
+        return result;
+    }
+
     const bool use_fft = true;
-    return 1.0 - ecdf_noncrossing_probability(n, B_steps, A_steps, use_fft);
+    const double noncrossing_probability =
+        ecdf_noncrossing_probability_prechecked(
+            n, B_steps, A_steps, use_fft);
+
+    result.probability = 1.0 - noncrossing_probability;
+    return result;
 }
 
 
@@ -81,10 +132,8 @@ double ks_c_cdf(long n,
                 const std::vector<double>& A,
                 const std::vector<double>& B)
 {
-    validate_one_sample_boundaries(n, A, B);
-
     /* Preserve the historical internal boundary ordering in one place. */
-    return ks_cdf_impl(n, B, A);
+    return ks_cdf_impl(n, B, A).probability;
 }
 
 } // namespace KSgeneral

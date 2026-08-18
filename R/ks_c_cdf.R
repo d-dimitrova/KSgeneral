@@ -16,19 +16,22 @@ ks_c_cdf <- function(n, A, B)
     stop("'A' and 'B' must both have length 'n'")
   }
 
-  if (anyNA(A) || anyNA(B) || any(!is.finite(A)) || any(!is.finite(B))) {
-    stop("'A' and 'B' must contain only finite, non-missing values")
+  ## Elementwise validation (finite values, range and monotonicity) and
+  ## first-crossing detection are combined in one C++ pass.
+  ##
+  ## Preserve the historical internal boundary ordering:
+  ## upper boundary B first, lower boundary A second.
+  ans <- .ks_c_cdf_direct(n, B, A)
+
+  if (ans$crossing >= 0L) {
+    warning(
+      sprintf(
+        "The lower and upper boundaries cross! i=%d.",
+        ans$crossing
+      ),
+      call. = FALSE
+    )
   }
 
-  if (any(A < 0 | A > 1) || any(B < 0 | B > 1)) {
-    stop("'A' and 'B' must contain values in [0, 1]")
-  }
-
-  if (is.unsorted(A) || is.unsorted(B)) {
-    stop("'A' and 'B' must be nondecreasing")
-  }
-
-  # The internal C++ routine preserves the historical boundary order
-  # Preserve the historical boundary ordering: upper B first, lower A second.
-  .ks_c_cdf_direct(n, as.numeric(B), as.numeric(A))
+  ans$value
 }

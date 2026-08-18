@@ -1,5 +1,5 @@
 KS2sample <- function(x, y, alternative = c("two.sided", "less", "greater"), 
-                     conservative = F, weight = 0, tol = 1e-08) {
+                     conservative = F, weight = 0, tol = 1e-08, tail = T) {
   Varname <- paste(deparse(substitute(x)), "and", deparse(substitute(y)))
   Method2 <- NULL
   if (is.numeric(weight)) {
@@ -101,7 +101,7 @@ KS2sample <- function(x, y, alternative = c("two.sided", "less", "greater"),
 
   names(DSTAT) <- "D"
   Method <- paste(Method, "Two-sample Kolmogorov-Smirnov Test", Method2, Method1)  
-  result <- KS2sample_Rcpp(Nx, Ny, KIND, M, DSTAT, W_vec, tol)
+  result <- if (tail) KS2sample_Rcpp(Nx, Ny, KIND, M, DSTAT, W_vec, tol) else KS2sample_c_Rcpp(Nx, Ny, KIND, M, DSTAT, W_vec, tol)
   if(result < -2.5){
     stop("Calculation unstable")
   }
