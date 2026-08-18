@@ -14,11 +14,13 @@ The functions in 'KSgeneral' for the one-sample KS test implement a novel, accur
 The functions in 'KSgeneral' for the two-sample test implement algorithms which generalize the method due to Nikiforov (1994), and calculate the exact p-values of the KS test and the Kuiper test respectively. Both of them allow tested data samples to come from continuous, discrete or mixed distributions (ties are also allowed).
 
 **To cite this package in publication: (for the use of the one-sample KS test) Dimitrina S. Dimitrova, Vladimir K. Kaishev, and Senren Tan. Computing the Kolmogorov-Smirnov Distribution When the Underlying CDF is Purely Discrete, Mixed, or Continuous. *Journal of Statistical Software*. 2020, 95(10): 1–42. <doi:10.18637/jss.v095.i10>, 
-(for the use of the two-sample KS and Kuiper tests) Dimitrina S. Dimitrova, Yun Jia and  Vladimir K. Kaishev. Efficient Exact Calculation of p-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests. *submitted* 2026.** 
+(for the use of the two-sample KS and Kuiper tests) Dimitrina S. Dimitrova, Yun Jia, and Vladimir K. Kaishev (2026). Efficient Exact Calculation of p-values of the Two-sample Kolmogorov–Smirnov and Kuiper Tests. *Journal of Statistical Computation and Simulation*, to appear.** 
 
 The p-value for the one-sample KS test is expressed as a double-boundary non-crossing probability for a homogeneous Poisson process, which is then efficiently computed using Fast Fourier Transform (FFT). The p-values for the two-sample KS and Kuiper tests are expressed as the ratio of the total numbers for point sequences defined on an integer-valued grid stay wholly in a subset to a combinatorial number.
 
 The package can also be used to compute and plot the complementary cdf of the one-sample KS statistic which is known to depend on the hypothesized distribution when the latter is discontinuous (i.e. purely discrete or mixed).
+
+A companion Wolfram Language implementation of the exact two-sample KS and Kuiper tests is available at [KS2sample-Kuiper2sample](https://github.com/fakecloudsjy/KS2sample-Kuiper2sample). Because the Wolfram Language uses exact rational arithmetic natively, **the p-values are returned as exact rational numbers** that can be evaluated to arbitrary numerical precision. This exactness comes at a cost in speed: the Wolfram implementation runs substantially slower than the R/C++ code in KSgeneral.
 
 
 # Installation
