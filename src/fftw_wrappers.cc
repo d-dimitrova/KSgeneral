@@ -1,12 +1,9 @@
-#include <iostream>
-#include <cassert>
 #include <cstring>
+#include <stdexcept>
 #include "fftw_wrappers.h"
 #include "aligned_mem.h"
-#include <Rcpp.h>
 
 using namespace std;
-using namespace Rcpp;
 
 FFTW_R2C_1D_Executor::FFTW_R2C_1D_Executor(int n_real_samples) :
     input_size(n_real_samples),
@@ -27,10 +24,8 @@ FFTW_R2C_1D_Executor::~FFTW_R2C_1D_Executor()
 void FFTW_R2C_1D_Executor::set_input_zeropadded(const double* buffer, int size)
 {
     if (size > input_size) {
-        //std::cerr << "size: " << size << "input_size: " << input_size << std::endl;
-        Rcpp::Rcerr << "size: " << size << "input_size: " << input_size << std::endl;
+        throw std::invalid_argument("input size exceeds FFTW buffer size");
     }
-    assert(size <= input_size);
     memcpy(input_buffer, buffer, sizeof(double)*size);
     memset(&input_buffer[size], 0, sizeof(double)*(input_size - size));
 }

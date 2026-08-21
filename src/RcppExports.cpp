@@ -10,6 +10,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// ks_c_cdf_direct
+Rcpp::List ks_c_cdf_direct(double n, std::vector<double> B_steps, std::vector<double> A_steps);
+RcppExport SEXP _KSgeneral_ks_c_cdf_direct(SEXP nSEXP, SEXP B_stepsSEXP, SEXP A_stepsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type n(nSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type B_steps(B_stepsSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type A_steps(A_stepsSEXP);
+    rcpp_result_gen = Rcpp::wrap(ks_c_cdf_direct(n, B_steps, A_steps));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ks_c_cdf_Rcpp
 double ks_c_cdf_Rcpp(double n);
 RcppExport SEXP _KSgeneral_ks_c_cdf_Rcpp(SEXP nSEXP) {
@@ -22,7 +35,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // KS2sample_c_Rcpp
-double KS2sample_c_Rcpp(int m, int n, int kind, Rcpp::IntegerVector M, double q, Rcpp::NumericVector w_vec, double tol);
+double KS2sample_c_Rcpp(int m, int n, int kind, std::vector<int> M, double q, std::vector<double> w_vec, double tol);
 RcppExport SEXP _KSgeneral_KS2sample_c_Rcpp(SEXP mSEXP, SEXP nSEXP, SEXP kindSEXP, SEXP MSEXP, SEXP qSEXP, SEXP w_vecSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -30,44 +43,44 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type kind(kindSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type M(MSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type M(MSEXP);
     Rcpp::traits::input_parameter< double >::type q(qSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w_vec(w_vecSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type w_vec(w_vecSEXP);
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     rcpp_result_gen = Rcpp::wrap(KS2sample_c_Rcpp(m, n, kind, M, q, w_vec, tol));
     return rcpp_result_gen;
 END_RCPP
 }
 // Kuiper2sample_Rcpp
-double Kuiper2sample_Rcpp(int m, int n, Rcpp::IntegerVector M, double q);
+double Kuiper2sample_Rcpp(int m, int n, std::vector<int> M, double q);
 RcppExport SEXP _KSgeneral_Kuiper2sample_Rcpp(SEXP mSEXP, SEXP nSEXP, SEXP MSEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type M(MSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type M(MSEXP);
     Rcpp::traits::input_parameter< double >::type q(qSEXP);
     rcpp_result_gen = Rcpp::wrap(Kuiper2sample_Rcpp(m, n, M, q));
     return rcpp_result_gen;
 END_RCPP
 }
 // Kuiper2sample_c_Rcpp
-double Kuiper2sample_c_Rcpp(int m, int n, Rcpp::IntegerVector M, double q);
+double Kuiper2sample_c_Rcpp(int m, int n, std::vector<int> M, double q);
 RcppExport SEXP _KSgeneral_Kuiper2sample_c_Rcpp(SEXP mSEXP, SEXP nSEXP, SEXP MSEXP, SEXP qSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type M(MSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type M(MSEXP);
     Rcpp::traits::input_parameter< double >::type q(qSEXP);
     rcpp_result_gen = Rcpp::wrap(Kuiper2sample_c_Rcpp(m, n, M, q));
     return rcpp_result_gen;
 END_RCPP
 }
 // KS2sample_Rcpp
-double KS2sample_Rcpp(int m, int n, int kind, Rcpp::IntegerVector M, double q, Rcpp::NumericVector w_vec, double tol);
+double KS2sample_Rcpp(int m, int n, int kind, std::vector<int> M, double q, std::vector<double> w_vec, double tol);
 RcppExport SEXP _KSgeneral_KS2sample_Rcpp(SEXP mSEXP, SEXP nSEXP, SEXP kindSEXP, SEXP MSEXP, SEXP qSEXP, SEXP w_vecSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -75,9 +88,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type m(mSEXP);
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
     Rcpp::traits::input_parameter< int >::type kind(kindSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type M(MSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type M(MSEXP);
     Rcpp::traits::input_parameter< double >::type q(qSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type w_vec(w_vecSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type w_vec(w_vecSEXP);
     Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
     rcpp_result_gen = Rcpp::wrap(KS2sample_Rcpp(m, n, kind, M, q, w_vec, tol));
     return rcpp_result_gen;
@@ -85,6 +98,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_KSgeneral_ks_c_cdf_direct", (DL_FUNC) &_KSgeneral_ks_c_cdf_direct, 3},
     {"_KSgeneral_ks_c_cdf_Rcpp", (DL_FUNC) &_KSgeneral_ks_c_cdf_Rcpp, 1},
     {"_KSgeneral_KS2sample_c_Rcpp", (DL_FUNC) &_KSgeneral_KS2sample_c_Rcpp, 7},
     {"_KSgeneral_Kuiper2sample_Rcpp", (DL_FUNC) &_KSgeneral_Kuiper2sample_Rcpp, 4},

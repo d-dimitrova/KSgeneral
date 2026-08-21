@@ -1,21 +1,14 @@
 #include <algorithm>
 #include <cmath>
 #include <cassert>
-#include <iostream>
 #include <stdexcept>
 #include <numeric>
-#include <algorithm>
 #include <sstream>
 #include "fftwconvolver.h"
 #include "aligned_mem.h"
 #include "common.h"
 #include "poisson_pmf.h"
 #include "string_utils.h"
-/*************/
-#include <Rcpp.h>
-using namespace Rcpp;
-/*************/
-
 using namespace std;
 
 enum BoundType {H_STEP, G_STEP, END};
@@ -59,28 +52,33 @@ static vector<Bound> join_all_bounds(const vector<double>& h_steps, const vector
     return bounds;
 }
 
-static bool lower_and_upper_boundaries_cross(const vector<double>& g_steps, const vector<double>& h_steps)
+static bool lower_and_upper_boundaries_cross(const vector<double>& g_steps,
+                                              const vector<double>& h_steps)
 {
     if (g_steps.size() > h_steps.size()) {
-        Rcpp::Rcout << "The lower and upper boundaries cross: g(1) > h(1).\n";
         return true;
     }
+
     for (size_t i = 0; i < g_steps.size(); ++i) {
         if (g_steps[i] < h_steps[i]) {
-            Rcpp::Rcout << "The lower and upper boundaries cross! i=" << i << ".\n";
             return true;
         }
     }
+
     return false;
 }
 
 
-vector<double> poisson_process_noncrossing_probability(double intensity, const vector<double>& g_steps, const vector<double>& h_steps, bool use_fft)
+/*
+ * Numerical Poisson-process calculation after the boundary-crossing check has
+ * already been performed.
+ */
+static vector<double> poisson_process_noncrossing_probability_unchecked(
+    double intensity,
+    const vector<double>& g_steps,
+    const vector<double>& h_steps,
+    bool use_fft)
 {
-    if (lower_and_upper_boundaries_cross(g_steps, h_steps)) {
-        return vector<double>();
-    }
-
     vector<Bound> bounds = join_all_bounds(h_steps, g_steps);
     int n = h_steps.size();
     DoubleBuffer<double> buffers(n+1, 0.0);
@@ -99,19 +97,27 @@ vector<double> poisson_process_noncrossing_probability(double intensity, const v
         pmfgen.compute_pmf(cur_size, lambda, pmf);
 
         if (use_fft) {
-            fftconvolver.convolve_same_size(cur_size, pmf, &buffers.get_src()[g_step_count], &buffers.get_dest()[g_step_count]);
+            fftconvolver.convolve_same_size(
+                cur_size,
+                pmf,
+                &buffers.get_src()[g_step_count],
+                &buffers.get_dest()[g_step_count]);
         } else {
-            convolve_same_size(cur_size, pmf, &buffers.get_src()[g_step_count], &buffers.get_dest()[g_step_count]);
+            convolve_same_size(
+                cur_size,
+                pmf,
+                &buffers.get_src()[g_step_count],
+                &buffers.get_dest()[g_step_count]);
         }
 
         BoundType tag = bounds[i].tag;
         if (tag == H_STEP) {
             ++h_step_count;
             buffers.get_dest()[h_step_count] = 0.0;
-            buffers.get_src()[h_step_count] = 0.0; // Not strictly necessary. This just keeps the arrays cleaner when printing.
+            buffers.get_src()[h_step_count] = 0.0;
         } else if (tag == G_STEP) {
             buffers.get_dest()[g_step_count] = 0.0;
-            buffers.get_src()[g_step_count] = 0.0; // Not strictly necessary. This just keeps the arrays cleaner when printing.
+            buffers.get_src()[g_step_count] = 0.0;
             ++g_step_count;
         } else {
             assert(tag == END);
@@ -126,30 +132,86 @@ vector<double> poisson_process_noncrossing_probability(double intensity, const v
 }
 
 
+vector<double> poisson_process_noncrossing_probability(
+    double intensity,
+    const vector<double>& g_steps,
+    const vector<double>& h_steps,
+    bool use_fft)
+{
+    if (lower_and_upper_boundaries_cross(g_steps, h_steps)) {
+        return vector<double>();
+    }
 
-double ecdf_noncrossing_probability(int n, const vector<double>& g_steps, const vector<double>& h_steps, bool use_fft)
+    return poisson_process_noncrossing_probability_unchecked(
+        intensity, g_steps, h_steps, use_fft);
+}
+
+
+double ecdf_noncrossing_probability_prechecked(
+    int n,
+    const vector<double>& g_steps,
+    const vector<double>& h_steps,
+    bool use_fft)
 {
     if ((int)g_steps.size() > n) {
         stringstream ss;
-        ss << "Empirical CDF must cross lower boundary g(t) since g(1)==" << g_steps.size() << " > n and the number of samples is n." << endl;
+        ss << "Empirical CDF must cross lower boundary g(t) since g(1)=="
+           << g_steps.size()
+           << " > n and the number of samples is n."
+           << endl;
         throw runtime_error(ss.str());
     }
+
     vector<double> processed_h_steps(n, 0.0);
+
     if (h_steps.size() == 0) {
         // Special case, only the lower bound is specified.
-        // We treat this as an implicit upper bound satisfying h(t) = n for all t.
+        // We treat this as an implicit upper bound satisfying h(t) = n
+        // for all t.
     } else {
-        if (lower_and_upper_boundaries_cross(g_steps, h_steps)) {
-            return 0.0;
-        }
         if ((int)h_steps.size() < n) {
             stringstream ss;
-            ss << "Empirical CDF must cross lower boundary g(t) since h(1)==" << h_steps.size() << " > n and the number of samples is n. h_steps:" << endl;
+            ss << "Empirical CDF must cross lower boundary g(t) since h(1)=="
+               << h_steps.size()
+               << " > n and the number of samples is n. h_steps:"
+               << endl;
             throw runtime_error(ss.str() + vector_to_string(h_steps));
         }
-        copy(h_steps.begin(), h_steps.begin() + n, processed_h_steps.begin());
+
+        copy(
+            h_steps.begin(),
+            h_steps.begin() + n,
+            processed_h_steps.begin());
     }
-    vector<double> poisson_nocross_probs = poisson_process_noncrossing_probability(n, g_steps, processed_h_steps, use_fft);
+
+    vector<double> poisson_nocross_probs =
+        poisson_process_noncrossing_probability_unchecked(
+            n, g_steps, processed_h_steps, use_fft);
+
     return poisson_nocross_probs[n] / poisson_pmf(n, n);
 }
 
+
+double ecdf_noncrossing_probability(
+    int n,
+    const vector<double>& g_steps,
+    const vector<double>& h_steps,
+    bool use_fft)
+{
+    if ((int)g_steps.size() > n) {
+        stringstream ss;
+        ss << "Empirical CDF must cross lower boundary g(t) since g(1)=="
+           << g_steps.size()
+           << " > n and the number of samples is n."
+           << endl;
+        throw runtime_error(ss.str());
+    }
+
+    if (h_steps.size() != 0 &&
+        lower_and_upper_boundaries_cross(g_steps, h_steps)) {
+        return 0.0;
+    }
+
+    return ecdf_noncrossing_probability_prechecked(
+        n, g_steps, h_steps, use_fft);
+}

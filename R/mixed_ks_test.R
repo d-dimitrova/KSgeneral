@@ -87,12 +87,7 @@ mixed_ks_test <- function(x, jump_points, Mixed_dist, ..., tol = 1e-10){
 
   }
 
-  df <- data.frame(rbind(f_b, f_a))
-  write.table(df,"Boundary_Crossing_Time.txt", sep = ", ", row.names = FALSE, col.names = FALSE)
-
-  PVAL <- KSgeneral::ks_c_cdf_Rcpp(n)
-
-  file.remove("Boundary_Crossing_Time.txt")
+  PVAL <- ks_c_cdf(n, f_a, f_b)
 
   nm_alternative <- "two-sided"
 
