@@ -13,7 +13,9 @@ In Example 3.3 of Dimitrova, Kaishev, Tan (2020), the data set is modelled using
   A data frame with 232 observations on the proportion of inhabitants living within a 200 kilometer wide costal strip in 2010.
 }
 \source{
-\url{https://sedac.ciesin.columbia.edu/data/set/nagdc-population-landscape-climate-estimates-v3}
+Center for International Earth Science Information Network (CIESIN), Columbia University (2012).
+\emph{National Aggregates of Geospatial Data Collection: Population, Landscape, and Climate Estimates, Version 3 (PLACE III)}. Version 3.00. Palisades, NY: NASA Socioeconomic Data and Applications Center (SEDAC).
+\doi{10.7927/H4F769GP}.
 }
 \references{
 Dimitrina S. Dimitrova, Vladimir K. Kaishev, Senren Tan. (2020) "Computing the Kolmogorov-Smirnov Distribution When the Underlying CDF is Purely Discrete, Mixed or Continuous". Journal of Statistical Software, \bold{95}(10): 1-42. doi:10.18637/jss.v095.i10.
