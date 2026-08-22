@@ -3,11 +3,24 @@ Type: Package
 Version: 2.1.0
 Title: Computing P-Values of the One-Sample K-S Test and the Two-Sample
         K-S and Kuiper Tests for (Dis)Continuous Null Distribution
-Author: Dimitrina S. Dimitrova <D.Dimitrova@city.ac.uk>,
-        Yun Jia <yunjia2019@gmail.com>,
-        Vladimir K. Kaishev <Vladimir.Kaishev.1@city.ac.uk>,
-        Senren Tan <raymondtsrtsr@outlook.com>
-Maintainer: Dimitrina S. Dimitrova <D.Dimitrova@city.ac.uk>
+Authors@R: c(
+    person(given = c("Dimitrina", "S."),
+           family = "Dimitrova",
+           role = c("aut", "cre"),
+           email = "D.Dimitrova@city.ac.uk"),
+    person(given = "Yun",
+           family = "Jia",
+           role = "aut",
+           email = "yunjia2019@gmail.com"),
+    person(given = c("Vladimir", "K."),
+           family = "Kaishev",
+           role = "aut",
+           email = "Vladimir.Kaishev.1@city.ac.uk"),
+    person(given = "Senren",
+           family = "Tan",
+           role = "aut",
+           email = "raymondtsrtsr@outlook.com")
+  )
 Depends: R (>= 3.3.0)
 SystemRequirements: fftw3 (>=3.3.4)
 Copyright: Copyright holders of FFTW3: Copyright (c) 2003, 2007-11
