@@ -2,25 +2,23 @@
 #define __aligned_mem__
 
 #include <complex>
-#include <cstdlib>
-#include "mm_malloc.h"
-
-#define ALIGNMENT (32)
+#include <fftw3.h>
 
 inline double* allocate_aligned_doubles(int n)
 {
-    return static_cast<double*>(_mm_malloc(n*sizeof(double), ALIGNMENT));
+    return static_cast<double*>(fftw_malloc(static_cast<size_t>(n) * sizeof(double)));
 }
 
 inline std::complex<double>* allocate_aligned_complexes(int n)
 {
-    return static_cast<std::complex<double>*>(_mm_malloc(n*sizeof(std::complex<double>), ALIGNMENT));
+    return static_cast<std::complex<double>*>(
+        fftw_malloc(static_cast<size_t>(n) * sizeof(std::complex<double>))
+    );
 }
-
 
 inline void free_aligned_mem(void* p)
 {
-    _mm_free(p);
+    fftw_free(p);
 }
 
 #endif
