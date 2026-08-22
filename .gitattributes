@@ -1,0 +1,4 @@
+configure.ac text eol=lf
+configure text eol=lf
+cleanup text eol=lf
+*.sh text eol=lf
