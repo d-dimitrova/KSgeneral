@@ -157,6 +157,18 @@ jobs:
         with:
           r-version: release
 
+      - name: Install FFTW on macOS
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          brew install fftw pkgconf
+          FFTW_PREFIX="$(brew --prefix fftw)"
+          export PKG_CONFIG_PATH="$FFTW_PREFIX/lib/pkgconfig:${PKG_CONFIG_PATH:-}"
+          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH" >> "$GITHUB_ENV"
+          echo "FFTW prefix: $FFTW_PREFIX"
+          pkg-config --modversion fftw3
+          pkg-config --cflags --libs fftw3
+
       - name: Set up TinyTeX
         uses: r-lib/actions/setup-tinytex@v2
 
