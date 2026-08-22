@@ -1,0 +1,183 @@
+name: R CMD check - CRAN matrix
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+permissions: read-all
+
+env:
+  GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+  R_KEEP_PKG_SOURCE: yes
+
+jobs:
+  native:
+    name: ${{ matrix.config.id }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - id: r-devel-windows-x86_64
+            os: windows-latest
+            r: devel
+
+          - id: r-release-windows-x86_64
+            os: windows-latest
+            r: release
+
+          - id: r-oldrel-windows-x86_64
+            os: windows-latest
+            r: oldrel-1
+
+          - id: r-release-macos-arm64
+            os: macos-latest
+            r: release
+
+          - id: r-oldrel-macos-arm64
+            os: macos-latest
+            r: oldrel-1
+
+          - id: r-release-macos-x86_64
+            os: macos-15-intel
+            r: release
+
+          - id: r-oldrel-macos-x86_64
+            os: macos-15-intel
+            r: oldrel-1
+
+          - id: r-release-linux-arm64
+            os: ubuntu-24.04-arm
+            r: release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: ${{ matrix.config.r }}
+
+      - name: Install package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Show platform and compiler
+        shell: bash
+        run: |
+          echo "=== runner ==="
+          echo "OS:   $RUNNER_OS"
+          echo "ARCH: $RUNNER_ARCH"
+          uname -a || true
+          echo "=== R ==="
+          Rscript -e 'sessionInfo()'
+          echo "=== compilers ==="
+          gcc --version 2>/dev/null | head -n 1 || true
+          g++ --version 2>/dev/null | head -n 1 || true
+          clang --version 2>/dev/null | head -n 1 || true
+
+      - name: R CMD check --as-cran
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran")'
+          build_args: '"--no-manual"'
+          error-on: '"warning"'
+          upload-results: always
+          artifact-name: ${{ matrix.config.id }}-results
+
+  cran-like-linux:
+    name: ${{ matrix.config.id }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - id: r-devel-linux-x86_64-debian-clang
+            container: ubuntu-clang
+
+          - id: r-devel-linux-x86_64-debian-gcc
+            container: ubuntu-gcc16
+
+          - id: r-patched-linux-x86_64
+            container: ubuntu-next
+
+          - id: r-release-linux-x86_64
+            container: ubuntu-release
+
+          - id: r-devel-fedora-gcc-proxy
+            container: gcc16
+
+          - id: r-devel-fedora-clang-proxy
+            container: clang22
+
+    container:
+      image: ghcr.io/r-hub/containers/${{ matrix.config.container }}:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show container platform and compiler
+        run: |
+          cat /etc/os-release || true
+          uname -a
+          R -q -e 'sessionInfo()'
+          sh -c '${CC:-gcc} --version' 2>/dev/null | head -n 1 || true
+          sh -c '${CXX:-g++} --version' 2>/dev/null | head -n 1 || true
+
+      - name: Install dependencies
+        run: |
+          R -q -e 'pak::pkg_install(c("deps::.", "any::rcmdcheck"), dependencies = TRUE)'
+
+      - name: R CMD check --as-cran
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          args: 'c("--no-manual", "--as-cran")'
+          build_args: '"--no-manual"'
+          error-on: '"warning"'
+          upload-results: always
+          artifact-name: ${{ matrix.config.id }}-results
+
+  full-manual:
+    name: r-release-linux-x86_64-full-manual
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: release
+
+      - name: Set up TinyTeX
+        uses: r-lib/actions/setup-tinytex@v2
+
+      - name: Install package dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - name: Build and run full R CMD check --as-cran
+        shell: bash
+        run: |
+          R CMD build .
+          PKG=$(ls -1t KSgeneral_*.tar.gz | head -n 1)
+          echo "Checking $PKG"
+          R CMD check --as-cran "$PKG"
+
+      - name: Upload full check directory
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: r-release-linux-x86_64-full-manual-results
+          path: KSgeneral.Rcheck
+          if-no-files-found: warn
