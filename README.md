@@ -1,8 +1,9 @@
 ![downloads](https://cranlogs.r-pkg.org/badges/grand-total/KSgeneral)
 ![downloads](https://cranlogs.r-pkg.org/badges/KSgeneral)
 ![downloads](https://cranlogs.r-pkg.org/badges/last-week/KSgeneral)
-[![Rdoc](http://www.rdocumentation.org/badges/version/KSgeneral)](http://www.rdocumentation.org/packages/KSgeneral)
+[![Rdoc](https://img.shields.io/cran/v/KSgeneral?label=Rdoc)](https://www.rdocumentation.org/packages/KSgeneral)
 [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/KSgeneral)](https://cran.r-project.org/package=KSgeneral)
+[![R-CMD-check](https://github.com/d-dimitrova/KSgeneral/actions/workflows/R-CMD-check-cran-matrix.yaml/badge.svg?branch=master)](https://github.com/d-dimitrova/KSgeneral/actions/workflows/R-CMD-check-cran-matrix.yaml)
 
 # KSgeneral
 Computes p-values for the one-sample and two-sample Kolmogorov-Smirnov (KS) tests and the two-sample Kuiper test for any fixed critical level and arbitrary (possibly very large) sample sizes. For the one-sample KS test, it allows the pre-specified cumulative distribution function under the null hypothesis to be continuous, purely discrete or mixed. For the two-sample test, it is assumed that both samples come from an unspecified (unknown) continuous, purely discrete or mixed distribution, i.e. ties (repeated observations) are allowed.
