@@ -16,6 +16,21 @@ bibentry(bibtype = "Article",
   pages        = "1--42",
   doi          = "10.18637/jss.v095.i10",
 
-  header       = "To cite KSgeneral in publications use:"
+  header       = "For use of the one-sample KS test, please cite:"
 )
 
+
+bibentry(bibtype = "Article",
+  title        = "Efficient exact calculation of p-values of the two-sample {Kolmogorov-Smirnov} and {Kuiper} tests",
+  author       = c(person(given = c("Dimitrina", "S."),
+                          family = "Dimitrova"),
+                   person(given = "Yun",
+                          family = "Jia"),
+                   person(given = c("Vladimir", "K."),
+                          family = "Kaishev")),
+  journal      = "Journal of Statistical Computation and Simulation",
+  year         = "2026",
+  pages        = "1--19",
+  doi          = "10.1080/00949655.2026.2721410",
+  header       = "For use of the two-sample KS and Kuiper tests, please cite:"
+)

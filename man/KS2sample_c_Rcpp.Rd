@@ -57,14 +57,14 @@ Numeric value corresponding to \eqn{P(D_{m,n}< q)}{}, given sample sizes \code{m
 }
 
 \source{
-Based on the Fortran subroutine by Nikiforov (1994). See also Dimitrova, Jia, Kaishev (2024).
+Based on the Fortran subroutine by Nikiforov (1994). See also Dimitrova, Jia, Kaishev (2026).
 }
 \references{
 Paul L. Canner (1975). "A Simulation Study of One- and Two-Sample Kolmogorov-Smirnov Statistics with a Particular Weight Function". Journal of the American Statistical Association, \bold{70}(349), 209-211.
 
 Nikiforov, A. M. (1994). "Algorithm AS 288: Exact Smirnov Two-Sample Tests for Arbitrary Distributions." Journal of the Royal Statistical Society. Series C (Applied Statistics), \bold{43}(1), 265–270.
 
-Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2024). "The R functions KS2sample and Kuiper2sample: Efficient Exact Calculation of P-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests".  \emph{submitted}
+Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2026). "Efficient exact calculation of p-values of the two-sample Kolmogorov-Smirnov and Kuiper tests". \emph{Journal of Statistical Computation and Simulation}, 1--19. doi: \doi{10.1080/00949655.2026.2721410}.
 }
 \examples{
 ## Computing the unweighted two-sample Kolmogorov-Smirnov test

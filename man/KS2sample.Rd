@@ -71,7 +71,7 @@ Note that, \eqn{D_{m,n}}{} is defined on the space \eqn{\Omega}{} of all possibl
   \item{data.name}{a character string giving names of the data.}
 }
 \source{
-	Based on the Fortran subroutine by Nikiforov (1994). See also Dimitrova, Jia, Kaishev (2024).
+	Based on the Fortran subroutine by Nikiforov (1994). See also Dimitrova, Jia, Kaishev (2026).
 }
 \references{
 Buning H (2001). "Kolmogorov-Smirnov- and Cramer-von Mises Type Two-sample Tests With Various Weight Functions." Communications in Statistics - Simulation and Computation, \bold{30}(4), 847-865.
@@ -84,7 +84,7 @@ Nikiforov, A. M. (1994). "Algorithm AS 288: Exact Smirnov Two-Sample Tests for A
 
 Viehmann, T. (2021). Numerically more stable computation of the p-values for the two-sample Kolmogorov-Smirnov test. \emph{arXiv preprint} arXiv:2102.08037.
 
-Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2024). "The R functions KS2sample and Kuiper2sample: Efficient Exact Calculation of P-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests". \emph{submitted}
+Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2026). "Efficient exact calculation of p-values of the two-sample Kolmogorov-Smirnov and Kuiper tests". \emph{Journal of Statistical Computation and Simulation}, 1--19. doi: \doi{10.1080/00949655.2026.2721410}.
 }
 \examples{
 ##Computes p-value of two-sided unweighted test for continuous data 
