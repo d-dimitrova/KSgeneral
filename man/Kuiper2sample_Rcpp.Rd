@@ -31,7 +31,21 @@ The numeric array \code{M} specifies the number of \emph{repeated observations} 
 where \eqn{V_{m,n}}{} is the two-sample Kuiper test statistic defined as \eqn{\varsigma_{m,n}}{}, for two samples \eqn{\bm{X}'_m}{} and  \eqn{\bm{Y}'_n}{} of sizes \eqn{m}{} and \eqn{n}{}, \emph{randomly drawn from the pooled sample without replacement}, i.e. \eqn{V_{m,n}}{} is defined on the space \eqn{\Omega}{} (see further details in \code{\link{Kuiper2sample}}), and \eqn{q}{} is the observed value of \eqn{\varsigma_{m,n}}{} with respect to the two observed samples \eqn{\bm{X}_m}{} and \eqn{\bm{Y}_n}{}.
 
 
-\code{\link{Kuiper2sample_Rcpp}} implements an algorithm from Dimitrova, Jia, Kaishev (2026),  that is based on extending the algorithm provided by Nikiforov (1994) and generalizing the method due to  Maag and Stephens (1968) and Hirakawa (1973). A version of the Nikiforov's recurrence proposed recently by Viehmann (2021) is further incorporated, which computes directly the p-value, with up to 4 digits extra accuracy, but at up to 3 times higher computational cost than \code{\link{Kuiper2sample_c_Rcpp}}. It is accurate and valid for \emph{arbitrary (possibly large) sample sizes}. This algorithm ensures a total worst-case run-time of order \eqn{O((mn)^{2})}{}. When  \code{m} and \code{n} have large greatest common divisor (an extreme case is \code{m} = \code{n}), it ensures a total worst-case run-time of order \eqn{O((m)^{2}n)}{}. 
+\code{\link{Kuiper2sample_Rcpp}} implements the direct exact p-value
+recurrence in Equation (26) of Dimitrova, Jia and Kaishev (2026).
+The underlying counting representation is given in Proposition 2.7,
+while Theorem 2.6 provides the theoretical justification for the
+permutation Kuiper formulation. The method extends the recurrence
+framework for the two-sample KS test and generalizes the earlier
+approaches of Maag and Stephens (1968) and Hirakawa (1973) to unequal
+sample sizes and data with ties.
+
+The recurrence in Equation (26) incorporates a numerically enhanced
+calculation in the spirit of Viehmann (2021), giving greater numerical
+accuracy at up to approximately three times the computational cost of
+\code{\link{Kuiper2sample_c_Rcpp}}. The total worst-case run-time is of
+order \eqn{O((mn)^2)}{}, reducing to order \eqn{O(m^2 n)}{} when
+\code{m} and \code{n} have a large greatest common divisor.
 
 Other known implementations for the two-sample Kuiper test mainly use the approximation method or Monte Carlo simulation (See also \code{\link{Kuiper2sample}}). The former method is invalid for data with ties and often gives p-values with large errors when sample sizes are small, the latter method is usually slow and inaccurate. Compared with other known algorithms, \code{\link{Kuiper2sample_Rcpp}}  allows data samples to come from \emph{continuous, discrete or mixed distribution} (i.e. ties may appear), and is more accurate and generally applicable for \emph{large sample sizes}.
 

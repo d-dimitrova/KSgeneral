@@ -49,7 +49,14 @@ where \eqn{D_{m,n}}{} is the two-sample Kolmogorov-Smirnov test statistic define
 
  
 
-	\code{\link{KS2sample_c_Rcpp}} implements an exact algorithm, extending the Fortran 77 subroutine due to Nikiforov (1994), an extended functionality by allowing more flexible choice of weight, as well as for \emph{large sample sizes}. This leads to faster computation time, as well as, relatively high accuracy for very large \code{m} and \code{n} (less accurate than \code{\link{KS2sample_Rcpp}}). Compared with other known algorithms, it allows data samples come from \emph{continuous, discrete or mixed distribution}(i.e. ties may appear), and it is more efficient and more generally applicable for \emph{large sample sizes}. This algorithm ensures a total worst-case run-time of order \eqn{O(nm)}{}.
+\code{\link{KS2sample_c_Rcpp}} implements the exact recurrence in
+Equation (10) of Dimitrova, Jia and Kaishev (2026), based on the
+lattice-path counting representation established in Proposition 2.2.
+The method generalizes the recurrence approach of Nikiforov (1994) by
+allowing arbitrary positive weight functions and data from continuous,
+discrete or mixed distributions, including data with ties. It computes
+the complementary probability \eqn{P(D_{m,n} < q)}{} and has total
+worst-case run-time of order \eqn{O(nm)}{}.
 }
 
 \value{
@@ -57,7 +64,9 @@ Numeric value corresponding to \eqn{P(D_{m,n}< q)}{}, given sample sizes \code{m
 }
 
 \source{
-Based on the Fortran subroutine by Nikiforov (1994). See also Dimitrova, Jia, Kaishev (2026).
+Implements Equation (10) of Dimitrova, Jia and Kaishev (2026),
+based on Proposition 2.2 and generalizing the recurrence approach
+of Nikiforov (1994).
 }
 \references{
 Paul L. Canner (1975). "A Simulation Study of One- and Two-Sample Kolmogorov-Smirnov Statistics with a Particular Weight Function". Journal of the American Statistical Association, \bold{70}(349), 209-211.
