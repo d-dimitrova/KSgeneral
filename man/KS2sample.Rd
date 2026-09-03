@@ -60,7 +60,23 @@ Note that, \eqn{D_{m,n}}{} is defined on the space \eqn{\Omega}{} of all possibl
 	
 	 
 	
-\code{\link{KS2sample}} calculates the exact p-value of the KS test using an algorithm which generalizes the method due to Nikiforov (1994). If \code{tail = F}, \code{\link{KS2sample}} calculates the complementary p-value, \eqn{1 - p}. For the purpose, an exact algorithm which generalizes the method due to Nikiforov (1994) is implemented. Alternatively, if \code{tail = T}, a version of the Nikiforov's recurrence proposed recently by Viehmann (2021) is implemented, which computes directly the p-value, with higher accuracy, giving up to 17 correct digits, but at up to 3 times higher computational cost. \code{\link{KS2sample}} ensures a total worst-case run-time of order \eqn{O(nm)}{}. In comparison with other known algorithms, it not only allows the flexible choice of weights which in some cases improve the statistical power (see Dimitrova, Jia, Kaishev 2024), but also is more efficient and generally applicable for \emph{large sample sizes}.
+\code{\link{KS2sample}} calculates exact p-values using the recurrence
+method developed in Dimitrova, Jia and Kaishev (2026). Theorem 2.1
+provides the asymptotic justification for the permutation formulation
+of the two-sample KS test, while Proposition 2.2 represents the required
+permutation count as the number of trajectories that remain wholly
+within an admissible region of a two-dimensional integer-valued lattice.
+The resulting recurrence generalizes the method of Nikiforov (1994) and
+allows arbitrary positive weight functions.
+
+If \code{tail = F}, the complementary p-value \eqn{P(D_{m,n} < q)}{}
+is computed using the recurrence in Equation (10) of Dimitrova, Jia and
+Kaishev (2026). If \code{tail = T}, the numerically enhanced recurrence
+in Equation (11), developed in the spirit of Viehmann (2021), is used
+to compute the p-value directly. The latter provides higher numerical
+accuracy, at up to approximately three times the computational cost.
+\code{\link{KS2sample}} has total worst-case run-time of order
+\eqn{O(nm)}{}.
 }
 \value{
   A list with class \code{"htest"} containing the following components:
@@ -71,7 +87,9 @@ Note that, \eqn{D_{m,n}}{} is defined on the space \eqn{\Omega}{} of all possibl
   \item{data.name}{a character string giving names of the data.}
 }
 \source{
-	Based on the Fortran subroutine by Nikiforov (1994). See also Dimitrova, Jia, Kaishev (2024).
+The method is described in Dimitrova, Jia and Kaishev (2026);
+see Theorem 2.1, Proposition 2.2 and Equations (10)--(11).
+It generalizes the recurrence approach of Nikiforov (1994).
 }
 \references{
 Buning H (2001). "Kolmogorov-Smirnov- and Cramer-von Mises Type Two-sample Tests With Various Weight Functions." Communications in Statistics - Simulation and Computation, \bold{30}(4), 847-865.
@@ -84,7 +102,7 @@ Nikiforov, A. M. (1994). "Algorithm AS 288: Exact Smirnov Two-Sample Tests for A
 
 Viehmann, T. (2021). Numerically more stable computation of the p-values for the two-sample Kolmogorov-Smirnov test. \emph{arXiv preprint} arXiv:2102.08037.
 
-Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2024). "The R functions KS2sample and Kuiper2sample: Efficient Exact Calculation of P-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests". \emph{submitted}
+Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2026). "Efficient exact calculation of p-values of the two-sample Kolmogorov-Smirnov and Kuiper tests". \emph{Journal of Statistical Computation and Simulation}, 1--19. doi: \doi{10.1080/00949655.2026.2721410}.
 }
 \examples{
 ##Computes p-value of two-sided unweighted test for continuous data 

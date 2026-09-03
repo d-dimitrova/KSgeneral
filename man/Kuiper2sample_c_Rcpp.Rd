@@ -32,7 +32,19 @@ The numeric array \code{M} specifies the number of \emph{repeated observations} 
 where \eqn{V_{m,n}}{} is the two-sample Kuiper test statistic defined as \eqn{\varsigma_{m,n}}{}, for two samples \eqn{\bm{X}'_m}{} and  \eqn{\bm{Y}'_n}{} of sizes \eqn{m}{} and \eqn{n}{}, \emph{randomly drawn from the pooled sample without replacement}, i.e. \eqn{V_{m,n}}{} is defined on the space \eqn{\Omega}{} (see further details in \code{\link{Kuiper2sample}}), and \eqn{q}{} is the observed value of \eqn{\varsigma_{m,n}}{} with respect to the two observed samples \eqn{\bm{X}_m}{} and \eqn{\bm{Y}_n}{}.
 
 	
-\code{\link{Kuiper2sample_c_Rcpp}} implements an algorithm from Dimitrova, Jia, Kaishev (2024),  that is based on extending the algorithm provided by Nikiforov (1994) and generalizing the method due to  Maag and Stephens (1968) and Hirakawa (1973). It is relatively accurate (less accurate than \code{\link{Kuiper2sample_Rcpp}}) and valid for \emph{arbitrary (possibly large) sample sizes}. This algorithm ensures a total worst-case run-time of order \eqn{O((mn)^{2})}{}. When  \code{m} and \code{n} have large greatest common divisor (an extreme case is \code{m} = \code{n}), it ensures a total worst-case run-time of order \eqn{O((m)^{2}n)}{}. 
+\code{\link{Kuiper2sample_c_Rcpp}} implements the exact calculation in
+Equation (22) of Dimitrova, Jia and Kaishev (2026), based on the counting
+representation established in Proposition 2.7. The method extends the
+recurrence framework for the two-sample KS test and generalizes the
+earlier results of Maag and Stephens (1968) and Hirakawa (1973) to
+unequal sample sizes and data with ties.
+
+The function computes the complementary probability
+\eqn{P(V_{m,n} < q)}{}. It is faster but generally less numerically
+accurate than \code{\link{Kuiper2sample_Rcpp}}. The total worst-case
+run-time is of order \eqn{O((mn)^2)}{}, reducing to order
+\eqn{O(m^2 n)}{} when \code{m} and \code{n} have a large greatest
+common divisor.
 
 Other known implementations for the two-sample Kuiper test mainly use the approximation method or Monte Carlo simulation (See also \code{\link{Kuiper2sample}}). The former method is invalid for data with ties and often gives p-values with large errors when sample sizes are small, the latter method is usually slow and inaccurate. Compared with other known algorithms, \code{\link{Kuiper2sample_c_Rcpp}}  allows data samples to come from \emph{continuous, discrete or mixed distribution} (i.e. ties may appear), and is more accurate and generally applicable for \emph{large sample sizes}.
 
@@ -49,7 +61,7 @@ Hirakawa, K. (1973). The two-sample Kuiper test. TRU Mathematics, \bold{9}, 99-1
 
 Nikiforov, A. M. (1994). "Algorithm AS 288: Exact Smirnov Two-Sample Tests for Arbitrary Distributions." Journal of the Royal Statistical Society. Series C (Applied Statistics), \bold{43}(1), 265–270.
 
-Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2024). "The R functions KS2sample and Kuiper2sample: Efficient Exact Calculation of P-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests". \emph{submitted}
+Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2026). "Efficient exact calculation of p-values of the two-sample Kolmogorov-Smirnov and Kuiper tests". \emph{Journal of Statistical Computation and Simulation}, 1--19. doi: \doi{10.1080/00949655.2026.2721410}.
 }
 \examples{
 ## Computing the unweighted two-sample Kolmogorov-Smirnov test

@@ -74,7 +74,6 @@ Gleser L.J. (1985). "Exact Power of Goodness-of-Fit Tests of Kolmogorov Type for
 
 Moscovich A., Nadler B. (2017). "Fast Calculation of Boundary Crossing Probabilities for Poisson Processes". Statistics and Probability Letters, \bold{123}, 177-182.
 
-Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2024). "The R functions KS2sample and Kuiper2sample: Efficient Exact Calculation of P-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests".  \emph{submitted}
-
+Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2026). "Efficient exact calculation of p-values of the two-sample Kolmogorov-Smirnov and Kuiper tests". \emph{Journal of Statistical Computation and Simulation}, 1--19. doi: \doi{10.1080/00949655.2026.2721410}.
 }
 

@@ -37,7 +37,29 @@ Note that, \eqn{V_{m,n}}{} is defined on the space \eqn{\Omega}{} of all possibl
 \code{conservative} is a logical variable whether the test should be conducted conservatively. By default, \code{conservative = F}, \code{\link{Kuiper2sample}} returns the p-value that is defined through the conditional probability above. However, when the user has a priori knowledge that both samples are from a continuous distribution even if ties are present, for example, repeated observations are caused by rounding errors, the value \code{conservative = T} should be assigned, since the conditional probability is no longer relevant. In this case, \code{\link{Kuiper2sample}} computes p-values for the Kuiper test assuming no ties are present, and returns a p-value which is an upper bound of the true p-value. Note that, if the null hypothesis is rejected using the calculated upper bound for the p-value, it should also be rejected with the true p-value.
 	
 	
-	\code{\link{Kuiper2sample}} calculates the exact p-value of the Kuiper test using an algorithm from Dimitrova, Jia, Kaishev (2024), which is based on extending the algorithm provided by Nikiforov (1994) and generalizing the method due to  Maag and Stephens (1968) and Hirakawa (1973). If \code{tail = F}, \code{\link{Kuiper2sample}} calculates the complementary p-value \eqn{1-p}. For the purpose, an exact algorithm which generalizes the method due to Nikiforov (1994) is implemented. Alternatively, if \code{tail = T}, a version of the Nikiforov's recurrence proposed recently by Viehmann (2021) is further incorporated, which computes directly the p-value, with up to 4 digits extra accuracy, but at up to 3 times higher computational cost. It is accurate and valid for \emph{arbitrary (possibly large) sample sizes}. This algorithm ensures a total worst-case run-time of order \eqn{O((mn)^{2})}{}. When  \code{m} and \code{n} have large greatest common divisor (an extreme case is \code{m} = \code{n}), it ensures a total worst-case run-time of order \eqn{O((m)^{2}n)}{}. 
+\code{\link{Kuiper2sample}} calculates exact p-values for the two-sample
+Kuiper test using the method developed in Dimitrova, Jia and Kaishev
+(2026). Theorem 2.6 establishes the corresponding asymptotic
+justification for the permutation Kuiper formulation, while
+Proposition 2.7 gives the counting representation underlying the exact
+calculation. The method extends the recurrence framework used for the
+two-sample KS test and generalizes the earlier results of Maag and
+Stephens (1968) and Hirakawa (1973), which apply to equal sample sizes
+without ties.
+
+If \code{tail = F}, the complementary p-value \eqn{P(V_{m,n} < q)}{}
+is computed using Equation (22) of Dimitrova, Jia and Kaishev (2026).
+If \code{tail = T}, the direct p-value is computed using the numerically
+enhanced recurrence in Equation (26). The latter incorporates an
+adaptation in the spirit of Viehmann (2021) and provides higher numerical
+accuracy at increased computational cost.
+
+The method is valid for arbitrary sample sizes and for continuous,
+discrete or mixed distributions, including data with ties. Its total
+worst-case run-time is of order \eqn{O((mn)^2)}{}. When \code{m} and
+\code{n} have a large greatest common divisor, including the special
+case \code{m = n}, the worst-case run-time is of order
+\eqn{O(m^2 n)}{}.
 
 	\code{\link{Kuiper2sample}} is accurate and fast compared with the function based on the Monte Carlo simulation. Compared to the implementation using asymptotic method, \code{\link{Kuiper2sample}} allows data samples to come from \emph{continuous, discrete or mixed distribution} (i.e. ties may appear), and is more accurate than asymptotic method when sample sizes are small.
 
@@ -61,7 +83,7 @@ Nikiforov, A. M. (1994). "Algorithm AS 288: Exact Smirnov Two-Sample Tests for A
 
 Viehmann, T. (2021). Numerically more stable computation of the p-values for the two-sample Kolmogorov-Smirnov test. \emph{arXiv preprint} arXiv:2102.08037.
 
-Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2024). "The R functions KS2sample and Kuiper2sample: Efficient Exact Calculation of P-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests". \emph{submitted}
+Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2026). "Efficient exact calculation of p-values of the two-sample Kolmogorov-Smirnov and Kuiper tests". \emph{Journal of Statistical Computation and Simulation}, 1--19. doi: \doi{10.1080/00949655.2026.2721410}.
 }
 
 \examples{

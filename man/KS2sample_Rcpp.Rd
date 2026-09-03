@@ -48,7 +48,20 @@ The numeric array \code{M} specifies the number of \emph{repeated observations} 
 where \eqn{D_{m,n}}{} is the two-sample Kolmogorov-Smirnov test statistic defined according to the value of \code{weight} and \code{alternative}, for two samples \eqn{\bm{X}'_m}{} and  \eqn{\bm{Y}'_n}{} of sizes \eqn{m}{} and \eqn{n}{}, \emph{randomly drawn from the pooled sample without replacement}, i.e. \eqn{D_{m,n}}{} is defined on the space \eqn{\Omega}{} (see further details in \code{\link{KS2sample}}), and \eqn{q}{} is the observed value of \eqn{\Delta_{m,n}}{} defined according to the value of \code{weight} and \code{alternative} with respect to the two observed samples \eqn{\bm{X}_m}{} and \eqn{\bm{Y}_n}{}. 
 
 
-	\code{\link{KS2sample_Rcpp}} implements an exact algorithm, extending the Fortran 77 subroutine due to Nikiforov (1994), an extended functionality by allowing more flexible choices of weight, as well as for \emph{large sample sizes}. A version of the Nikiforov's recurrence proposed recently by Viehmann (2021) is further incorporated, which computes directly the p-value, with higher accuracy, giving up to 17 correct digits, but at up to 3 times higher computational cost than \code{\link{KS2sample_c_Rcpp}}. Compared with other known algorithms, it allows data samples to come from \emph{continuous, discrete or mixed distribution}(i.e. ties may appear), and it is more efficient and more generally applicable for \emph{large sample sizes}. This algorithm ensures a total worst-case run-time of order \eqn{O(nm)}{}.
+\code{\link{KS2sample_Rcpp}} implements the exact recurrence in
+Equation (11) of Dimitrova, Jia and Kaishev (2026), based on the
+lattice-path counting representation established in Proposition 2.2.
+Theorem 2.1 provides the theoretical justification for the corresponding
+permutation formulation of the two-sample KS test. The method generalizes
+the recurrence approach of Nikiforov (1994) to arbitrary positive weight
+functions and data from continuous, discrete or mixed distributions,
+including data with ties.
+
+Equation (11) incorporates a numerically more stable recurrence developed
+in the spirit of Viehmann (2021) and computes the p-value directly. It
+provides higher numerical accuracy, at up to approximately three times
+the computational cost of \code{\link{KS2sample_c_Rcpp}}. The total
+worst-case run-time is of order \eqn{O(nm)}{}.
 }
 
 \value{
@@ -56,7 +69,10 @@ Numeric value corresponding to \eqn{P(D_{m,n}\geq q)}{}, given sample sizes \cod
 }
 
 \source{
-Based on the Fortran subroutine by Nikiforov (1994). See also Dimitrova, Jia, Kaishev (2024).
+Implements Equation (11) of Dimitrova, Jia and Kaishev (2026);
+see also Theorem 2.1 and Proposition 2.2. The method generalizes
+Nikiforov (1994) and incorporates the numerical approach of
+Viehmann (2021).
 }
 \references{
 Paul L. Canner (1975). "A Simulation Study of One- and Two-Sample Kolmogorov-Smirnov Statistics with a Particular Weight Function". Journal of the American Statistical Association, \bold{70}(349), 209-211.
@@ -65,7 +81,7 @@ Nikiforov, A. M. (1994). "Algorithm AS 288: Exact Smirnov Two-Sample Tests for A
 
 Viehmann, T. (2021). Numerically more stable computation of the p-values for the two-sample Kolmogorov-Smirnov test. \emph{arXiv preprint} arXiv:2102.08037.
 
-Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2024). "The R functions KS2sample and Kuiper2sample: Efficient Exact Calculation of P-values of the Two-sample Kolmogorov-Smirnov and Kuiper Tests".  \emph{submitted}
+Dimitrina S. Dimitrova, Yun Jia, Vladimir K. Kaishev (2026). "Efficient exact calculation of p-values of the two-sample Kolmogorov-Smirnov and Kuiper tests". \emph{Journal of Statistical Computation and Simulation}, 1--19. doi: \doi{10.1080/00949655.2026.2721410}.
 }
 \examples{
 ## Computing the unweighted two-sample Kolmogorov-Smirnov test
